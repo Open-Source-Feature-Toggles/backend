@@ -1,12 +1,11 @@
-const Feature = require('../models/feature')
-const Variable = require("../models/variable")
-const Project = require('../models/project')
-const User = require("../models/user")
+const Feature = require('../../models/api/feature')
+const Variable = require("../../models/api/variable")
+const Project = require('../../models/api/project')
+const User = require("../../models/auth/user")
 const { validationResult, body } = require('express-validator')
 
 
 
-// This needs to get the ownersID and save it in the schema 
 
 exports.POST_make_new_feature = [
     body("name").trim().notEmpty().escape(), 
@@ -14,7 +13,6 @@ exports.POST_make_new_feature = [
     body("initialVariableKey").trim().notEmpty().escape(), 
     body("parentProject").trim().notEmpty().escape(), 
     body("featureVariableName").trim().notEmpty().escape(),
-    
     async function (req, res) {
         try {
             const errors = validationResult(req)

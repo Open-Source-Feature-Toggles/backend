@@ -5,9 +5,9 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const app = express()
 dotenv.config()
-const projectRoutes = require('./routes/projects')
-const featuresRoutes = require('./routes/features') 
-const variableRoutes = require('./routes/variables')
+const projectRoutes = require('./routes/api/projects')
+const featuresRoutes = require('./routes/api/features') 
+const variableRoutes = require('./routes/api/variables')
 
 
 // Environment Variables

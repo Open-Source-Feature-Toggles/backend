@@ -1,4 +1,4 @@
-const Project = require('../models/project')
+const Project = require('../../models/api/project')
 const { validationResult, body } = require('express-validator')
 
 exports.POST_make_new_project = [
