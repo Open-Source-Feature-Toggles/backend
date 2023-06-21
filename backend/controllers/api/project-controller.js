@@ -3,21 +3,27 @@ const { validationResult, body } = require('express-validator')
 
 exports.POST_make_new_project = [
     body("name").trim().notEmpty().escape(), 
+    body("username").trim().notEmpty().escape(), 
     async function (req, res) {
         try {
             const errors = validationResult(req)
             if (!errors.isEmpty()){
                 return res.status(400).json({ errors: errors.array() })
             }
-            let { name } = req.body
-            let projectExists = await Project.findOne({ name })
-            if (!projectExists){
+            let { name, username } = req.body
+            let projectExists = await Project.findOne({ 
+                $and : [
+                    { name }, 
+                    { owner : username }, 
+                ]    
+            }).exec()
+            if (projectExists){
                 return res.status(409).json({ error: "project-name-exists" })
             }
             let newProject = new Project({
                 name,  
                 features: [],
-                owner: null, 
+                owner: username, 
                 created: new Date(), 
             })
             await newProject.save()
