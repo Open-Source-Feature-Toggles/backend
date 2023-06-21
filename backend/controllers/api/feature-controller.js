@@ -2,12 +2,61 @@ const Feature = require('../../models/api/feature')
 const Variable = require("../../models/api/variable")
 const Project = require('../../models/api/project')
 const User = require("../../models/auth/user")
+const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
 
 
 
 
+exports.POST_delete_feature = [
+    body("featureName").trim().notEmpty().escape(), 
+    body("projectName").trim().notEmpty().escape(), 
+    body("featureVariableName").trim().notEmpty().escape(), 
+    async function (req, res) {
+        // Use ACID to ensure all data is deleted or none is deleted at all
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        try {
+            let errors = validationResult(req)
+            if (!errors.isEmpty()){
+                    return res.status(400).json({ errors : errors.array() })
+            } 
+            let { featureName, projectName, featureVariableName } = req.body
+            let [project, feature] = await Promise.all(
+                [
+                    Project.findOne({ name : projectName }), 
+                    Feature.findOne({
+                        $or: [
+                            { name : featureName },
+                            { featureVariableName : featureVariableName }
+                        ]
+                    })
+                ]
+            )
+            project.features = project.features.filter(
+                projectFeature => !projectFeature._id.equals(feature._id)
+            )
+            await Variable.deleteMany({ _id: { $in: feature.variables } })
+            await Promise.all([
+                project.save(),
+                Feature.findByIdAndDelete(feature._id), 
+            ])
+            await session.commitTransaction()
+            session.endSession()
+            res.sendStatus(200)
+        } catch (error) {
+            await session.abortTransaction()
+            session.endSession()
+            console.error(error)
+            res.sendStatus(500)
+        }
+    } 
+]
+
+
+
 exports.POST_make_new_feature = [
+    // This still needs to be assigned an owner at creation
     body("name").trim().notEmpty().escape(), 
     body("description").trim().escape(), 
     body("initialVariableKey").trim().notEmpty().escape(), 
@@ -15,7 +64,7 @@ exports.POST_make_new_feature = [
     body("featureVariableName").trim().notEmpty().escape(),
     async function (req, res) {
         try {
-            const errors = validationResult(req)
+            let errors = validationResult(req)
             if (!errors.isEmpty()){ 
                 return res.status(400).json({ errors: errors.array() }) 
             }
@@ -26,9 +75,18 @@ exports.POST_make_new_feature = [
                 parentProject, 
                 featureVariableName, 
             } = req.body
-            let getProject = Project.findOne({ name : parentProject })
+            let getProject = await Project.findOne({ name : parentProject }).exec()
+            let checkIfFeatureExists = await Feature.findOne({
+                $or: [
+                  { name },
+                  { featureVariableName }
+                ]
+            }).exec()
             if (!getProject) { 
-                res.status(409).json({ error: "project-not-found" }) 
+                return res.status(409).json({ error: "project-not-found" }) 
+            }
+            if (checkIfFeatureExists) {
+                return res.status(409).json({ error : "feature-name-already-exists" })
             }
             let newVariable = new Variable({
                 name : initialVariableKey, 
@@ -46,8 +104,12 @@ exports.POST_make_new_feature = [
                 created : new Date(), 
             })
             newVariable.parentFeature = newFeature._id
-            await newVariable.save()
-            await newFeature.save()
+            getProject.features.push(newFeature._id)
+            await Promise.all([
+                getProject.save(), 
+                newVariable.save(), 
+                newFeature.save(), 
+            ])
             res.sendStatus(200)
         } catch (error) {
             console.error(error)
