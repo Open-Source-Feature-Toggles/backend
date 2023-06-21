@@ -53,9 +53,9 @@ exports.POST_delete_feature = [
             project.features = project.features.filter(
                 projectFeature => !projectFeature._id.equals(feature._id)
             )
-            await Variable.deleteMany({ _id: { $in: feature.variables } })
             await Promise.all([
                 project.save(),
+                Variable.deleteMany({ _id: { $in: feature.variables } }), 
                 Feature.findByIdAndDelete(feature._id), 
             ])
             await session.commitTransaction()
