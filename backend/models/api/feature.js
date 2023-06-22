@@ -12,11 +12,12 @@ const featureSchema = new Schema({
     description : { type: Schema.Types.String }, 
     developmentEnabled : { type: Schema.Types.Boolean, require : true }, 
     productionEnabled : { type: Schema.Types.Boolean, require : true }, 
-    parentProject : { 
-        type : Schema.Types.ObjectId, 
+    parentProjectName : { 
+        type : Schema.Types.String, 
         ref : "project", 
         require: true, 
     }, 
+    parentProjectID : { type: Schema.Types.ObjectId, require : true }, 
     owner: { type: Schema.Types.String, require: true }, 
     created : { type: Schema.Types.Date, require: true } 
 })
