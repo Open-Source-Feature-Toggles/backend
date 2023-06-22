@@ -1,7 +1,6 @@
 const Feature = require('../../models/api/feature')
 const Variable = require("../../models/api/variable")
 const Project = require('../../models/api/project')
-const User = require("../../models/auth/user")
 const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
 
@@ -27,6 +26,64 @@ function FeatureExistsQuery (name, username, projectName) {
     })
 }
 
+
+exports.POST_change_production_status = [
+    body("name").trim().notEmpty().escape(),
+    body("username").trim().notEmpty().escape(),
+    body("projectName").trim().notEmpty().escape(),
+    async function (req, res) {
+        try {   
+            const errors = validationResult(body)
+            if (!errors.isEmpty()){
+                return res.sendStatus(400).json({ errors : errors.array() })
+            }
+            let { 
+                name, 
+                username, 
+                projectName
+            } = req.body
+            let feature = await FeatureExistsQuery(name, username, projectName).exec()
+            if (!feature){
+                return res.status(404).json({ errors : "resource-does-not-exist" })
+            }
+            feature.productionEnabled = !feature.productionEnabled
+            await feature.save()
+            res.status(200).json({ production_status : feature.productionEnabled })
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
+        }
+    }
+]
+
+exports.POST_change_development_status = [
+    body("name").trim().notEmpty().escape(),
+    body("username").trim().notEmpty().escape(),
+    body("projectName").trim().notEmpty().escape(),
+    async function (req, res) {
+        try {   
+            const errors = validationResult(body)
+            if (!errors.isEmpty()){
+                return res.sendStatus(400).json({ errors : errors.array() })
+            }
+            let { 
+                name, 
+                username, 
+                projectName
+            } = req.body
+            let feature = await FeatureExistsQuery(name, username, projectName).exec()
+            if (!feature){
+                return res.status(404).json({ errors : "resource-does-not-exist" })
+            }
+            feature.developmentEnabled = !feature.developmentEnabled
+            await feature.save()
+            res.status(200).json({ production_status : feature.developmentEnabled })
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
+        }
+    }
+]
 
 exports.POST_delete_feature = [
     body("featureName").trim().notEmpty().escape(), 
