@@ -6,6 +6,26 @@ const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
 
 
+function projectQuery (projectName, username) {
+    return Project.findOne({
+        $and : [
+            { name : projectName }, 
+            { owner : username }, 
+        ]
+    })
+}
+
+function FeatureExistsQuery (name, username, projectName) {
+    return Feature.findOne({
+        $and : [
+            { $and : [
+                { name },
+                { owner : username }, 
+            ]}, 
+            { parentProjectName : projectName }
+        ]
+    })
+}
 
 
 exports.POST_delete_feature = [
@@ -29,23 +49,8 @@ exports.POST_delete_feature = [
                 username 
             } = req.body
             let [project, feature] = await Promise.all([
-                Project.findOne({
-                    $and : [
-                        { name : projectName }, 
-                        { owner : username }, 
-                    ]
-                }), 
-                Feature.findOne({
-                  $and: [
-                    {
-                      $or: [
-                        { name: featureName },
-                        { [featureVariableName]: featureVariableName }
-                      ]
-                    },
-                    { owner: username }
-                  ]
-                })
+                projectQuery(projectName, username), 
+                FeatureExistsQuery(featureName, username, projectName), 
             ])
             if (!project || !feature ) { 
                 return res.status(400).json({ error : "cant-access-resource" })
@@ -93,29 +98,15 @@ exports.POST_make_new_feature = [
                 featureVariableName, 
                 username, 
             } = req.body
-            let getProject = await Project.findOne({ 
-                $and : [
-                    { name : parentProject }, 
-                    { owner : username }, 
-                ]
-            }).exec()
-            if (!getProject) { 
-                return res.status(409).json({ error: "project-not-found" }) 
-            }
-            let checkIfFeatureExists = await Feature.findOne({
-                $and : [
-                    { $and : [
-                        { $or : [
-                            { name }, 
-                            { variableName : featureVariableName }
-                        ]}, 
-                        { owner : username }
-                    ]}, 
-                    { parentProject : getProject._id }
-                ]
-            }).exec()
+            let [ checkIfFeatureExists, getProject ] = await Promise.all([
+                FeatureExistsQuery(name, username, parentProject), 
+                projectQuery(parentProject, username),
+            ])
             if (checkIfFeatureExists) {
                 return res.status(409).json({ error : "feature-name-already-exists" })
+            }
+            if (!getProject) { 
+                return res.status(409).json({ error: "project-not-found" }) 
             }
             let newVariable = new Variable({
                 name : initialVariableKey, 
@@ -130,11 +121,13 @@ exports.POST_make_new_feature = [
                 description, 
                 developmentEnabled : false, 
                 productionEnabled : false, 
-                parentProject : getProject._id,
+                parentProjectName : getProject.name,
+                parentProjectID : getProject._id,
                 owner : username, 
                 created : new Date(), 
             })
-            newVariable.parentFeature = newFeature._id
+            newVariable.parentFeatureName = newFeature.name
+            newVariable.parentFeatureID = newFeature._id
             getProject.features.push(newFeature._id)
             await Promise.all([
                 getProject.save(), 
