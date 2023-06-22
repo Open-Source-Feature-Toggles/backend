@@ -2,7 +2,6 @@ const Project = require('../../models/api/project')
 const Feature = require('../../models/api/feature')
 const Variable = require('../../models/api/variable')
 const { validationResult, body } = require('express-validator')
-const feature = require('../../models/api/feature')
 
 exports.POST_make_new_project = [
     body("name").trim().notEmpty().escape(), 
@@ -21,7 +20,7 @@ exports.POST_make_new_project = [
                 ]    
             }).exec()
             if (projectExists){
-                return res.status(409).json({ error: "project-name-exists" })
+                return res.status(409).json({ errors: "project-name-exists" })
             }
             let newProject = new Project({
                 name,  
@@ -55,11 +54,11 @@ exports.POST_delete_project = [
                 ]
             }).exec()
             if (!project) { 
-                return res.status(400).json({ error : "no-project-found" })    
+                return res.status(400).json({ errors : "no-project-found" })    
             }
             await Promise.all([
-                Variable.deleteMany({ parentFeature : { $in : project.features }}),
-                Feature.deleteMany({ parentProject : project._id }),
+                Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
+                Feature.deleteMany({ parentProjectID : project._id }),
                 Project.findByIdAndDelete(project._id),
             ])
             res.sendStatus(200)
