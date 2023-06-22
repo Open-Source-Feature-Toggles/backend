@@ -7,7 +7,7 @@ const ProjectSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref : "Feature",
     }], 
-    owner: { type: Schema.Types.ObjectId, require: true }, 
+    owner: { type: Schema.Types.String, require: true }, 
     created : { type: Schema.Types.Date, require: true } 
 })
 
