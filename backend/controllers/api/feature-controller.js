@@ -99,18 +99,21 @@ exports.POST_make_new_feature = [
                     { owner : username }, 
                 ]
             }).exec()
-            let checkIfFeatureExists = await Feature.findOne({ 
-                $and : [
-                    { $or : [
-                        { name }, 
-                        { featureVariableName }, 
-                    ]}, 
-                    { owner : username }
-                ]
-            }).exec()
             if (!getProject) { 
                 return res.status(409).json({ error: "project-not-found" }) 
             }
+            let checkIfFeatureExists = await Feature.findOne({
+                $and : [
+                    { $and : [
+                        { $or : [
+                            { name }, 
+                            { variableName : featureVariableName }
+                        ]}, 
+                        { owner : username }
+                    ]}, 
+                    { parentProject : getProject._id }
+                ]
+            }).exec()
             if (checkIfFeatureExists) {
                 return res.status(409).json({ error : "feature-name-already-exists" })
             }
