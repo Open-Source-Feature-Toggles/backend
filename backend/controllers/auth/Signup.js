@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator')
 const User = require('../../models/auth/user')
 const { hash } = require('bcrypt')
-const { generateAccessToken, generateRefreshToken } = require('./utils/generateTokens')
+const { generateAccessToken, generateRefreshToken } = require('../../helpers/generateTokens')
  
 
 exports.signUp = [

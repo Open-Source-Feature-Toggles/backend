@@ -3,7 +3,7 @@ const User = require('../../models/auth/user')
 const { compare } = require('bcrypt')
 const { sign } = require('jsonwebtoken')
 const { generateAccessToken, 
-        generateRefreshToken } = require('./utils/generateTokens')
+        generateRefreshToken } = require('../../helpers/generateTokens')
 
 exports.login = [ 
     body("username")
