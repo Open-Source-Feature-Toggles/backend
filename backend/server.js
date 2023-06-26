@@ -8,6 +8,7 @@ dotenv.config()
 const projectRoutes = require('./routes/api/projects')
 const featuresRoutes = require('./routes/api/features') 
 const variableRoutes = require('./routes/api/variables')
+const authRoutes = require('./routes/web/authRoutes')
 
 
 // Environment Variables
@@ -37,7 +38,7 @@ app.use(express.urlencoded({ extended : true }))
 app.use("/projects", projectRoutes)
 app.use("/features", featuresRoutes)
 app.use("/variables", variableRoutes)
-
+app.use('/auth', authRoutes)
 
 
 

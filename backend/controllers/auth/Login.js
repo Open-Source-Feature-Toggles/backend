@@ -1,10 +1,9 @@
 const { body, validationResult } = require('express-validator')
 const User = require('../../models/auth/user')
 const { compare } = require('bcrypt')
-const { sign, verify } = require('jsonwebtoken')
-const ACCESS_SECRET = process.env.ACCESS_SECRET
-const REFRESH_SECRET = process.env.REFRESH_SECRET
-
+const { sign } = require('jsonwebtoken')
+const { generateAccessToken, 
+        generateRefreshToken } = require('./utils/generateTokens')
 
 exports.login = [ 
     body("username")
