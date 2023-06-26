@@ -2,7 +2,7 @@ const Project = require('../../models/api/project')
 const Feature = require('../../models/api/feature')
 const Variable = require('../../models/api/variable')
 const { validationResult, body } = require('express-validator')
-const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
+const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../helpers/common-error-messages')
 
 exports.POST_make_new_project = [
     body("name").trim().notEmpty().escape(), 
@@ -20,7 +20,7 @@ exports.POST_make_new_project = [
                 ]    
             }).exec()
             if (projectExists){
-                return NameAlreadyExists(res, "Project")
+                return NameAlreadyExistsError(res, "Project")
             }
             let newProject = new Project({
                 name,  

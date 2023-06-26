@@ -1,7 +1,7 @@
 const Variable = require('../../models/api/variable')
 const Feature = require('../../models/api/feature')
 const { validationResult, body } = require('express-validator')
-const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
+const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../helpers/common-error-messages')
 
 
 function findParentFeatureQuery (name, owner, parentProject) {
@@ -54,7 +54,7 @@ exports.POST_make_new_variable = [
                 return ResourceNotFoundError(res, "Parent Feature")
             }
             if (checkIfVariableExists){
-                return NameAlreadyExists(res, "variable name")
+                return NameAlreadyExistsError(res, "variable name")
             }
             let newVariable = new Variable({
                 name, 

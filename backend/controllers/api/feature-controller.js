@@ -3,7 +3,7 @@ const Variable = require("../../models/api/variable")
 const Project = require('../../models/api/project')
 const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
-const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
+const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../helpers/common-error-messages')
 
 
 function projectQuery (projectName, username) {
@@ -151,7 +151,7 @@ exports.POST_make_new_feature = [
                 projectQuery(parentProject, req.user),
             ])
             if (checkIfFeatureExists) {
-                return NameAlreadyExists(res, "Feature name")
+                return NameAlreadyExistsError(res, "Feature name")
             }
             if (!getProject) { 
                 return ResourceNotFoundError(res, "Project") 
