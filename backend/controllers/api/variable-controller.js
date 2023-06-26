@@ -1,6 +1,7 @@
 const Variable = require('../../models/api/variable')
 const Feature = require('../../models/api/feature')
 const { validationResult, body } = require('express-validator')
+const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
 
 
 function findParentFeatureQuery (name, owner, parentProject) {
@@ -50,10 +51,10 @@ exports.POST_make_new_variable = [
                 findVariableQuery(name, req.user, parentFeature)
             ])
             if (!findParentFeature){
-                return res.status(404).json({ errors: "could-not-find-parent-feature" })
+                return ResourceNotFoundError(res, "Parent Feature")
             }
             if (checkIfVariableExists){
-                return res.status(409).json({ errors : "variable-already-exists" })
+                return NameAlreadyExists(res, "variable name")
             }
             let newVariable = new Variable({
                 name, 
@@ -97,10 +98,10 @@ exports.POST_delete_variable = [
                 findVariableQuery(name, req.user, parentFeature)
             ])
             if (!findParentFeature){
-                return res.status(409).json({ errors: "cant-find-project" })
+                return ResourceNotFoundError(res, "Parent Feature")
             } 
             if (!checkIfVariableExists){
-                return res.status(409).json({ errors : "variable-dne" })
+                return ResourceNotFoundError(res, "Variable")
             }
             findParentFeature.variables = findParentFeature.variables.filter(
                 variable => !variable._id.equals(checkIfVariableExists._id)
@@ -134,7 +135,7 @@ exports.POST_update_variable_status = [
             } = req.body 
             let getVariable = await findVariableQuery(name, req.user, parentFeature).exec()
             if (!getVariable){
-                res.status(404).json({ errors: "variable-not-found" })
+                return ResourceNotFoundError(res, "Variable")
             }
             getVariable.active = !getVariable.active
             await getVariable.save()

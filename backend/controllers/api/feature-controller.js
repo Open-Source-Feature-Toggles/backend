@@ -3,6 +3,7 @@ const Variable = require("../../models/api/variable")
 const Project = require('../../models/api/project')
 const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
+const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
 
 
 function projectQuery (projectName, username) {
@@ -42,7 +43,7 @@ exports.POST_change_production_status = [
             } = req.body
             let feature = await FeatureExistsQuery(name, req.user, projectName).exec()
             if (!feature){
-                return res.status(404).json({ errors : "resource-does-not-exist" })
+                return ResourceNotFoundError(res, "Feature")
             }
             feature.productionEnabled = !feature.productionEnabled
             await feature.save()
@@ -69,7 +70,7 @@ exports.POST_change_development_status = [
             } = req.body
             let feature = await FeatureExistsQuery(name, req.user, projectName).exec()
             if (!feature){
-                return res.status(404).json({ errors : "resource-does-not-exist" })
+                return ResourceNotFoundError(res, "Feature")
             }
             feature.developmentEnabled = !feature.developmentEnabled
             await feature.save()
@@ -102,7 +103,7 @@ exports.POST_delete_feature = [
                 FeatureExistsQuery(featureName, req.user, projectName), 
             ])
             if (!project || !feature ) { 
-                return res.status(400).json({ error : "cant-access-resource" })
+                return ResourceNotFoundError(res, "Project and or Feature")
             }
             project.features = project.features.filter(
                 projectFeature => !projectFeature._id.equals(feature._id)
@@ -150,10 +151,10 @@ exports.POST_make_new_feature = [
                 projectQuery(parentProject, req.user),
             ])
             if (checkIfFeatureExists) {
-                return res.status(409).json({ error : "feature-name-already-exists" })
+                return NameAlreadyExists(res, "Feature name")
             }
             if (!getProject) { 
-                return res.status(409).json({ error: "project-not-found" }) 
+                return ResourceNotFoundError(res, "Project") 
             }
             let newVariable = new Variable({
                 name : initialVariableKey, 

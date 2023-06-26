@@ -2,6 +2,7 @@ const Project = require('../../models/api/project')
 const Feature = require('../../models/api/feature')
 const Variable = require('../../models/api/variable')
 const { validationResult, body } = require('express-validator')
+const { ResourceNotFoundError, NameAlreadyExists } = require('../../helpers/common-error-messages')
 
 exports.POST_make_new_project = [
     body("name").trim().notEmpty().escape(), 
@@ -19,7 +20,7 @@ exports.POST_make_new_project = [
                 ]    
             }).exec()
             if (projectExists){
-                return res.status(409).json({ errors: "project-name-exists" })
+                return NameAlreadyExists(res, "Project")
             }
             let newProject = new Project({
                 name,  
@@ -52,7 +53,7 @@ exports.POST_delete_project = [
                 ]
             }).exec()
             if (!project) { 
-                return res.status(400).json({ errors : "no-project-found" })    
+                return ResourceNotFoundError(res, "Project")  
             }
             await Promise.all([
                 Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
