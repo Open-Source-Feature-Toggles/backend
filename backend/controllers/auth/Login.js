@@ -8,12 +8,10 @@ const { generateAccessToken,
 exports.login = [ 
     body("username")
         .trim()
-        .notEmpty().withMessage("Username cannot be empty")
         .isLength({ min : 8 }).withMessage("Username must be 8 characters long")
         .escape(),
     body("password")
         .trim()
-        .notEmpty().withMessage("Password cannot be empty")
         .isLength({ min : 8 }).withMessage("Password must be 8 characters long"), 
     async function (req, res) {
         try {
@@ -34,7 +32,7 @@ exports.login = [
             let refreshToken = generateRefreshToken(userExists.username)
             userExists.refreshToken = refreshToken
             await userExists.save()
-            res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true }); 
+            res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true })
             res.status(200).json({ accessToken })
         } catch (error) {
             console.error(error)
