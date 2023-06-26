@@ -33,7 +33,6 @@ exports.POST_make_new_variable = [
     body("active").trim().notEmpty().isBoolean().escape(), 
     body("parentFeature").trim().notEmpty().escape(), 
     body("parentProject").trim().notEmpty().escape(), 
-    body("username").trim().notEmpty().escape(), 
     async function (req, res) {
         try {
             const errors = validationResult(req)
@@ -45,11 +44,10 @@ exports.POST_make_new_variable = [
                 active, 
                 parentFeature, 
                 parentProject, 
-                username
             } = req.body
             let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-                findParentFeatureQuery(parentFeature, username, parentProject),
-                findVariableQuery(name, username, parentFeature)
+                findParentFeatureQuery(parentFeature, req.user, parentProject),
+                findVariableQuery(name, req.user, parentFeature)
             ])
             if (!findParentFeature){
                 return res.status(404).json({ errors: "could-not-find-parent-feature" })
@@ -60,7 +58,7 @@ exports.POST_make_new_variable = [
             let newVariable = new Variable({
                 name, 
                 active, 
-                owner : username, 
+                owner : req.user, 
                 created : new Date(), 
                 parentFeatureName : findParentFeature.name,
                 parentFeatureID : findParentFeature._id,  
@@ -83,7 +81,6 @@ exports.POST_delete_variable = [
     body("name").trim().notEmpty().escape(), 
     body("parentFeature").trim().notEmpty().escape(), 
     body("parentProject").trim().notEmpty().escape(), 
-    body("username").trim().notEmpty().escape(), 
     async function (req, res) {
         try {
             const errors = validationResult(req)
@@ -94,11 +91,10 @@ exports.POST_delete_variable = [
                 name, 
                 parentFeature, 
                 parentProject, 
-                username
             } = req.body
             let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-                findParentFeatureQuery(parentFeature, username, parentProject),
-                findVariableQuery(name, username, parentFeature)
+                findParentFeatureQuery(parentFeature, req.user, parentProject),
+                findVariableQuery(name, req.user, parentFeature)
             ])
             if (!findParentFeature){
                 return res.status(409).json({ errors: "cant-find-project" })
@@ -126,7 +122,6 @@ exports.POST_delete_variable = [
 exports.POST_update_variable_status = [
     body("name").trim().notEmpty().escape(), 
     body("parentFeature").trim().notEmpty().escape(), 
-    body("username").trim().notEmpty().escape(),
     async function (req, res) {
         try {
             const errors = validationResult(req)
@@ -136,9 +131,8 @@ exports.POST_update_variable_status = [
             let { 
                 name, 
                 parentFeature, 
-                username, 
             } = req.body 
-            let getVariable = await findVariableQuery(name, username, parentFeature).exec()
+            let getVariable = await findVariableQuery(name, req.user, parentFeature).exec()
             if (!getVariable){
                 res.status(404).json({ errors: "variable-not-found" })
             }

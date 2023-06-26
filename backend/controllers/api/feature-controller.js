@@ -29,7 +29,6 @@ function FeatureExistsQuery (name, username, projectName) {
 
 exports.POST_change_production_status = [
     body("name").trim().notEmpty().escape(),
-    body("username").trim().notEmpty().escape(),
     body("projectName").trim().notEmpty().escape(),
     async function (req, res) {
         try {   
@@ -38,11 +37,10 @@ exports.POST_change_production_status = [
                 return res.sendStatus(400).json({ errors : errors.array() })
             }
             let { 
-                name, 
-                username, 
+                name,  
                 projectName
             } = req.body
-            let feature = await FeatureExistsQuery(name, username, projectName).exec()
+            let feature = await FeatureExistsQuery(name, req.user, projectName).exec()
             if (!feature){
                 return res.status(404).json({ errors : "resource-does-not-exist" })
             }
@@ -58,7 +56,6 @@ exports.POST_change_production_status = [
 
 exports.POST_change_development_status = [
     body("name").trim().notEmpty().escape(),
-    body("username").trim().notEmpty().escape(),
     body("projectName").trim().notEmpty().escape(),
     async function (req, res) {
         try {   
@@ -68,10 +65,9 @@ exports.POST_change_development_status = [
             }
             let { 
                 name, 
-                username, 
                 projectName
             } = req.body
-            let feature = await FeatureExistsQuery(name, username, projectName).exec()
+            let feature = await FeatureExistsQuery(name, req.user, projectName).exec()
             if (!feature){
                 return res.status(404).json({ errors : "resource-does-not-exist" })
             }
@@ -88,8 +84,6 @@ exports.POST_change_development_status = [
 exports.POST_delete_feature = [
     body("featureName").trim().notEmpty().escape(), 
     body("projectName").trim().notEmpty().escape(), 
-    body("featureVariableName").trim().notEmpty().escape(), 
-    body("username").trim().notEmpty().escape(), 
     async function (req, res) {
         // Use ACID to ensure all data is deleted or none is deleted at all
         const session = await mongoose.startSession()
@@ -102,12 +96,10 @@ exports.POST_delete_feature = [
             let { 
                 featureName, 
                 projectName, 
-                featureVariableName, 
-                username 
             } = req.body
             let [project, feature] = await Promise.all([
-                projectQuery(projectName, username), 
-                FeatureExistsQuery(featureName, username, projectName), 
+                projectQuery(projectName, req.user), 
+                FeatureExistsQuery(featureName, req.user, projectName), 
             ])
             if (!project || !feature ) { 
                 return res.status(400).json({ error : "cant-access-resource" })
@@ -140,7 +132,6 @@ exports.POST_make_new_feature = [
     body("initialVariableKey").trim().notEmpty().escape(), 
     body("parentProject").trim().notEmpty().escape(), 
     body("featureVariableName").trim().notEmpty().escape(),
-    body("username").trim().notEmpty().escape(), 
     async function (req, res) {
         try {
             let errors = validationResult(req)
@@ -153,11 +144,10 @@ exports.POST_make_new_feature = [
                 initialVariableKey,
                 parentProject, 
                 featureVariableName, 
-                username, 
             } = req.body
             let [ checkIfFeatureExists, getProject ] = await Promise.all([
-                FeatureExistsQuery(name, username, parentProject), 
-                projectQuery(parentProject, username),
+                FeatureExistsQuery(name, req.user, parentProject), 
+                projectQuery(parentProject, req.user),
             ])
             if (checkIfFeatureExists) {
                 return res.status(409).json({ error : "feature-name-already-exists" })
@@ -168,7 +158,7 @@ exports.POST_make_new_feature = [
             let newVariable = new Variable({
                 name : initialVariableKey, 
                 active: false, 
-                owner : username, 
+                owner : req.user, 
                 created : new Date(), 
             })
             let newFeature = new Feature({
@@ -180,7 +170,7 @@ exports.POST_make_new_feature = [
                 productionEnabled : false, 
                 parentProjectName : getProject.name,
                 parentProjectID : getProject._id,
-                owner : username, 
+                owner : req.user, 
                 created : new Date(), 
             })
             newVariable.parentFeatureName = newFeature.name
