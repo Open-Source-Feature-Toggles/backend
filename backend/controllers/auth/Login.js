@@ -1,9 +1,9 @@
 const { body, validationResult } = require('express-validator')
 const User = require('../../models/auth/user')
 const { compare } = require('bcrypt')
-const { sign } = require('jsonwebtoken')
 const { generateAccessToken, 
-        generateRefreshToken } = require('../../helpers/generateTokens')
+        generateRefreshToken } = require('../../helpers/Token-Helpers')
+const { BadPasswordError, ResourceNotFoundError  } = require('../../helpers/common-error-messages')
 
 exports.login = [ 
     body("username")
@@ -22,11 +22,11 @@ exports.login = [
             let { username, password } = req.body
             let userExists = await User.findOne({ username }).exec()
             if (!userExists) { 
-                return res.status(404).json({ errors : "User not found" }) 
+                return ResourceNotFoundError(res, "User")
             }
             let validPassword = await compare(password, userExists.password)
             if (!validPassword) {
-                return res.status(409).json({ errors : "Invalid Password" })
+                return BadPasswordError(res)
             } 
             let accessToken = generateAccessToken(userExists.username)
             let refreshToken = generateRefreshToken(userExists.username)

@@ -1,8 +1,8 @@
 const { body, validationResult } = require('express-validator')
 const User = require('../../models/auth/user')
 const { hash } = require('bcrypt')
-const { generateAccessToken, generateRefreshToken } = require('../../helpers/generateTokens')
- 
+const { generateAccessToken, generateRefreshToken } = require('../../helpers/Token-Helpers')
+const { NameAlreadyExistsError } = require('../../helpers/common-error-messages')
 
 exports.signUp = [
     body("username")
@@ -14,7 +14,7 @@ exports.signUp = [
         .isLength({ min : 8 }).withMessage("Password must be 8 characters long"), 
     body("confirm_password")
         .trim()
-        .isLength({ min : 8 }).withMessage("Password must be 8 characters long"), 
+        .isLength({ min : 8 }).withMessage("Confirm Password must be 8 characters long"), 
     async function (req, res) {
         try {
             const errors = validationResult(req)
@@ -28,7 +28,7 @@ exports.signUp = [
             } = req.body
             let userExists = await User.findOne({ username }).exec()
             if (userExists){
-                return res.status(409).json({ errors : "User with that username already exists" })
+                return NameAlreadyExistsError(res, "Username")
             }
             if (password !== confirm_password){
                 return res.status(409).json({ errors: "Password and Confirm Passowrd must match" })
