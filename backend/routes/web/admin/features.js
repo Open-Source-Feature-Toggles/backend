@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router() 
-const feature_controller = require("../../controllers/api/feature-controller")
-const ProtectAuthRoutes = require('../../middlewares/auth')
+const feature_controller = require("../../../controllers/web/admin/feature-controller")
+const ProtectAuthRoutes = require('../../../middlewares/auth')
 
 router.post("/change-production-status", ProtectAuthRoutes, feature_controller.POST_change_production_status)
 

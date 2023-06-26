@@ -1,7 +1,7 @@
-const Variable = require('../../models/api/variable')
-const Feature = require('../../models/api/feature')
+const Variable = require('../../../models/api/variable')
+const Feature = require('../../../models/api/feature')
 const { validationResult, body } = require('express-validator')
-const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../helpers/common-error-messages')
+const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 
 
 function findParentFeatureQuery (name, owner, parentProject) {

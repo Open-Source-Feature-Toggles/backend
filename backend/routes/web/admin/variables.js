@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router() 
-const variable_controller = require('../../controllers/api/variable-controller')
-const ProtectAuthRoutes = require('../../middlewares/auth')
+const variable_controller = require('../../../controllers/web/admin/variable-controller')
+const ProtectAuthRoutes = require('../../../middlewares/auth')
 
 router.post("/make-new-variable", ProtectAuthRoutes, variable_controller.POST_make_new_variable)
 

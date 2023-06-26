@@ -1,9 +1,9 @@
 const { body, validationResult } = require('express-validator')
-const User = require('../../models/auth/user')
+const User = require('../../../models/auth/user')
 const { compare } = require('bcrypt')
 const { generateAccessToken, 
-        generateRefreshToken } = require('../../helpers/Token-Helpers')
-const { BadPasswordError, ResourceNotFoundError  } = require('../../helpers/common-error-messages')
+        generateRefreshToken } = require('../../../helpers/Token-Helpers')
+const { BadPasswordError, ResourceNotFoundError  } = require('../../../helpers/common-error-messages')
 
 exports.login = [ 
     body("username")

@@ -1,9 +1,9 @@
-const Feature = require('../../models/api/feature')
-const Variable = require("../../models/api/variable")
-const Project = require('../../models/api/project')
+const Feature = require('../../../models/api/feature')
+const Variable = require("../../../models/api/variable")
+const Project = require('../../../models/api/project')
 const mongoose = require('mongoose')
 const { validationResult, body } = require('express-validator')
-const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../helpers/common-error-messages')
+const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 
 
 function projectQuery (projectName, username) {
