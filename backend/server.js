@@ -3,6 +3,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
+const cookie_parser = require('cookie-parser')
 const app = express()
 dotenv.config()
 const projectRoutes = require('./routes/web/admin/projects')
@@ -27,10 +28,14 @@ async function connect_db () {
 connect_db()
 
 // Express Middleware 
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true, 
+}))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
+app.use(cookie_parser())
 
 
 // Routes
