@@ -1,15 +1,21 @@
 const express = require('express')
 const router = express.Router() 
-const feature_controller = require("../../../controllers/web/admin/feature-controller")
 const ProtectAuthRoutes = require('../../../middlewares/auth')
+const { 
+    POST_change_production_status, 
+    POST_change_development_status, 
+    POST_delete_feature,
+    POST_make_new_feature 
+} = require("../../../controllers/web/admin/feature-controller")
 
-router.post("/change-production-status", ProtectAuthRoutes, feature_controller.POST_change_production_status)
 
-router.post("/change-development-status", ProtectAuthRoutes, feature_controller.POST_change_development_status)
+router.post("/change-production-status", ProtectAuthRoutes, POST_change_production_status)
 
-router.post("/make-new-feature", ProtectAuthRoutes, feature_controller.POST_make_new_feature)
+router.post("/change-development-status", ProtectAuthRoutes, POST_change_development_status)
 
-router.delete("/delete-feature", ProtectAuthRoutes, feature_controller.POST_delete_feature)
+router.post("/make-new-feature", ProtectAuthRoutes, POST_make_new_feature)
+
+router.delete("/delete-feature", ProtectAuthRoutes, POST_delete_feature)
 
 
 module.exports = router
