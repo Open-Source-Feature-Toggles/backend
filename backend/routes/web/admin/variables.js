@@ -1,12 +1,17 @@
 const express = require('express')
 const router = express.Router() 
-const variable_controller = require('../../../controllers/web/admin/variable-controller')
 const ProtectAuthRoutes = require('../../../middlewares/auth')
+const { 
+    POST_make_new_variable, 
+    POST_update_variable_status, 
+    DELETE_delete_variable,  
+} = require('../../../controllers/web/admin/variable-controller')
 
-router.post("/make-new-variable", ProtectAuthRoutes, variable_controller.POST_make_new_variable)
 
-router.post("/update-variable-status", ProtectAuthRoutes, variable_controller.POST_update_variable_status)
+router.post("/make-new-variable", ProtectAuthRoutes, POST_make_new_variable)
 
-router.delete("/delete-variable", ProtectAuthRoutes, variable_controller.POST_delete_variable)
+router.post("/update-variable-status", ProtectAuthRoutes, POST_update_variable_status)
+
+router.delete("/delete-variable", ProtectAuthRoutes, DELETE_delete_variable)
 
 module.exports = router
