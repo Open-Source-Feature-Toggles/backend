@@ -4,52 +4,65 @@ const User = require('../models/auth/user')
 const ACCESS_SECRET = process.env.ACCESS_SECRET
 const REFRESH_SECRET = process.env.REFRESH_SECRET
 
-async function ProtectAuthRoutes (req, res, next) {
+
+async function verifyAccessToken (req, res, next) {
     try {
         let accessToken = getAccessToken(req)
-        let refreshToken = getRefreshToken(req)
-        if (!accessToken && !refreshToken){
-            return BadTokenError(res)
+        if (!accessToken){
+            return next()
         }
-        if (accessToken){
-            try {
-                let payload = await verifyToken(accessToken, ACCESS_SECRET)
-                req.user = payload.user
-                return next()
-            } catch (err) {
-                if (!refreshToken){
-                    return BadTokenError(res)
-                }
-            }
-        }
-        if (refreshToken){
-            try {
-                let payload = await verifyToken(refreshToken, REFRESH_SECRET)
-                let findUser = await User.findOne({ username : payload.user }).exec()
-                if (!findUser) {
-                    return ResourceNotFoundError(res, "User") 
-                }
-                if (findUser.refreshToken === refreshToken){
-                    req.user = payload.user
-                    req.accessToken = { accessToken : generateAccessToken(payload) }
-                    return next()
-                }
-                return BadTokenError(res)
-            } catch (error) {
-                console.error(error)
-                return BadTokenError(res)
-            }
+        try {
+            let payload = await verifyToken(accessToken, ACCESS_SECRET)
+            req.user = payload.user 
+            return next()
+        } catch (error) {
+            return next()
         }
     } catch (error) {
         console.error(error)
-        res.status(500)
+        res.sendStatus(500)
     }
 }
 
+async function verifyRefreshToken (req, res, next) {
+    try {
+        try {
+            // If verifyAccessToken successful, skip refresh token auth
+            if (req.user){
+                return next()
+            }
+            let refreshToken = getRefreshToken(req)
+            if (!refreshToken){
+                return BadTokenError(res)
+            }
+            let payload = await verifyToken(refreshToken, REFRESH_SECRET)
+            let findUser = await User.findOne({ username : payload.user })
+            if (!findUser || findUser.refreshToken !== refreshToken ){
+                return BadTokenError(res)
+            }
+            req.user = payload.user 
+            req.accessToken = generateAccessToken(payload)
+            req.userObject = findUser 
+            return next()
+        } catch (error) {   
+            return BadTokenError(res)
+        }
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)       
+    }
+}
+
+const ProtectAuthRoutes = [
+    verifyAccessToken, 
+    verifyRefreshToken
+]
 
 
-
-
-module.exports = ProtectAuthRoutes
+module.exports = {
+    verifyAccessToken, 
+    verifyRefreshToken, 
+    ProtectAuthRoutes
+}
 
 
