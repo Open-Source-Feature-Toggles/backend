@@ -10,6 +10,7 @@ const projectRoutes = require('./routes/web/admin/projects')
 const featuresRoutes = require('./routes/web/admin/features') 
 const variableRoutes = require('./routes/web/admin/variables')
 const authRoutes = require('./routes/web/authRoutes')
+const apiRouter = require('./routes/api/api-router')
 
 
 // Environment Variables
@@ -43,8 +44,8 @@ app.use(cookie_parser())
 app.use("/projects", projectRoutes)
 app.use("/features", featuresRoutes)
 app.use("/variables", variableRoutes)
-app.use('/auth', authRoutes)
-
+app.use("/auth", authRoutes)
+app.use("/api", apiRouter) 
 
 
 
