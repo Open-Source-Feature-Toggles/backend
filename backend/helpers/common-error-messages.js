@@ -14,10 +14,15 @@ function NameAlreadyExistsError (res, fieldType) {
     return res.status(409).json({ errors : `This ${fieldType} already exists` })
 }
 
+function PasswordConfirmPasswordError ( res ) {
+    return res.status(409).json({ errors : "Password and Confirm Password Must Match" })
+}
+
 
 module.exports = {
     BadTokenError, 
     BadPasswordError, 
     ResourceNotFoundError, 
     NameAlreadyExistsError, 
+    PasswordConfirmPasswordError, 
 }
