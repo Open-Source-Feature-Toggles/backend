@@ -8,7 +8,9 @@ const ProjectSchema = new Schema({
         ref : "Feature",
     }], 
     owner: { type: Schema.Types.String, require: true }, 
-    created : { type: Schema.Types.Date, require: true } 
+    created : { type: Schema.Types.Date, require: true }, 
+    productionApiKey : { type : Schema.Types.String, require: true }, 
+    developmentApiKey : { type : Schema.Types.String, require: true },
 })
 
 module.exports = mongoose.model('Project', ProjectSchema)

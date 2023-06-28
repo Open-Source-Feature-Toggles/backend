@@ -3,7 +3,7 @@ const Feature = require('../../../models/api/feature')
 const Variable = require('../../../models/api/variable')
 const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 const { projectValidation } = require('../../../middlewares/form-validation/project-validaters')
-
+const { generateApiKeys } = require('../../../helpers/Api-Key-Helpers')
 
 async function MakeNewProject (req, res) {
     try {
@@ -17,11 +17,14 @@ async function MakeNewProject (req, res) {
         if (projectExists){
             return NameAlreadyExistsError(res, "Project")
         }
+        let [ productionApiKey, developmentApiKey ] = await generateApiKeys()
         let newProject = new Project({
             name,  
             features: [],
             owner: req.user, 
             created: new Date(), 
+            productionApiKey, 
+            developmentApiKey, 
         })
         await newProject.save()
         res.sendStatus(200)
