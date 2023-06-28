@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router() 
-const ProtectAuthRoutes = require('../../../middlewares/auth')
+const { ProtectAuthRoutes } = require('../../../middlewares/auth')
 const { 
     POST_change_production_status, 
     POST_change_development_status, 

@@ -1,4 +1,4 @@
-const verifyRefreshToken = require('../../../middlewares/verifyTokenFindUser')
+const { verifyRefreshToken } = require('../../../middlewares/auth')
 
 async function LogoutUser (req, res) {
     try {
