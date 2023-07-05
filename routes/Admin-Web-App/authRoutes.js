@@ -6,10 +6,10 @@ const { ProtectAuthRoutes } = require('../../middlewares/auth')
 
 
 // Controllers 
-const { Login } = require('../../controllers/web/auth/Login')
-const { SignUp } = require('../../controllers/web/auth/Signup')
-const LaunchAppController = require('../../controllers/web/auth/Launch-App')
-const { LogoutUser } = require('../../controllers/web/auth/Logout')
+const { Login } = require('../../controllers/Admin-Web-App/auth/Login')
+const { SignUp } = require('../../controllers/Admin-Web-App/auth/Signup')
+const LaunchAppController = require('../../controllers/Admin-Web-App/auth/Launch-App')
+const { LogoutUser } = require('../../controllers/Admin-Web-App/auth/Logout')
 
 router.post("/login", Login)
 

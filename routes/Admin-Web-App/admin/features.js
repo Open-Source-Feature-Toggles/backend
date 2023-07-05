@@ -6,7 +6,7 @@ const {
     POST_change_development_status, 
     POST_delete_feature,
     POST_make_new_feature 
-} = require("../../../controllers/web/admin/feature-controller")
+} = require("../../../controllers/Admin-Web-App/admin/feature-controller")
 
 
 router.post("/change-production-status", ProtectAuthRoutes, POST_change_production_status)

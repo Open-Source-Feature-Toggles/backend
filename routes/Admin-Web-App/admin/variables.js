@@ -5,7 +5,7 @@ const {
     POST_make_new_variable, 
     POST_update_variable_status, 
     DELETE_delete_variable,  
-} = require('../../../controllers/web/admin/variable-controller')
+} = require('../../../controllers/Admin-Web-App/admin/variable-controller')
 
 
 router.post("/make-new-variable", ProtectAuthRoutes, POST_make_new_variable)
