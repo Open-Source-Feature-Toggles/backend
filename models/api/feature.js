@@ -17,7 +17,9 @@ const featureSchema = new Schema({
         ref : "project", 
         require: true, 
     }, 
-    parentProjectID : { type: Schema.Types.ObjectId, require : true }, 
+    parentProjectID : { type: Schema.Types.ObjectId, require : true },
+    productionApiKey : { type : Schema.Types.String, require: true }, 
+    developmentApiKey : { type : Schema.Types.String, require: true },
     owner: { type: Schema.Types.String, require: true }, 
     created : { type: Schema.Types.Date, require: true } 
 })
