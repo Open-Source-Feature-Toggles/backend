@@ -1,5 +1,4 @@
 const Variable = require('../../../models/api/variable')
-const Feature = require('../../../models/api/feature')
 const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 const { 
     MakeNewVariableValidation, 
