@@ -18,11 +18,16 @@ function PasswordConfirmPasswordError ( res ) {
     return res.status(409).json({ errors : "Password and Confirm Password Must Match" })
 }
 
+function noApiKeyHeaders ( res ) {
+    return res.status(404).json({ errors : "No Api Key Provided" })
+}
+
 
 module.exports = {
     BadTokenError, 
     BadPasswordError, 
     ResourceNotFoundError, 
     NameAlreadyExistsError, 
-    PasswordConfirmPasswordError, 
+    PasswordConfirmPasswordError,
+    noApiKeyHeaders,  
 }

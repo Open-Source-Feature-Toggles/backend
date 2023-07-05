@@ -9,4 +9,31 @@ function projectQuery (projectName, username) {
     })
 }
 
-module.exports = projectQuery
+async function queryProjectByProductionKey (apiKey) {
+    let productionKeyQuery = Project.findOne({
+        productionApiKey : apiKey
+    })
+    let developmentKeyQuery = Project.findOne({
+        developmentApiKey : apiKey, 
+    })
+    let [ productionProject, developmentProject ] = await Promise.all([
+        productionKeyQuery, 
+        developmentKeyQuery, 
+    ])
+    console.log(productionProject)
+    console.log(developmentProject)
+    if (productionProject) {
+        return { "one" : productionProject }
+    }
+    else {
+        return { "two" : developmentProject }
+    }
+}
+
+
+
+
+module.exports = { 
+    projectQuery,  
+    queryProjectByProductionKey
+} 
