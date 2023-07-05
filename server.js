@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const mongoose = require('mongoose')
+const mongoose = require('./providers/mongoDb')
+const redisClient = require('./providers/redisClient')
 const morgan = require('morgan')
 const cookie_parser = require('cookie-parser')
 const app = express()
@@ -15,18 +16,6 @@ const apiRouter = require('./routes/api/api-router')
 
 // Environment Variables
 const PORT = process.env.PORT || 3000 
-const db_string = process.env.CONNECTION_STRING
-
-// Connect to mongodb
-async function connect_db () {
-    try {
-        let connection = await mongoose.connect(db_string)
-        console.log(`[CONNECTED] to ${connection.connection.name}`)
-    } catch (error) {
-        console.log(error)
-    }
-}
-connect_db()
 
 // Express Middleware 
 app.use(cors({
