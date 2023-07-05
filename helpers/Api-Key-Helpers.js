@@ -2,7 +2,7 @@ const { randomBytes } = require('crypto')
 const Project = require('../models/api/project')
 
 function generateRandomKey () {
-    return randomBytes(64).toString('base64')
+    return randomBytes(64).toString('base64').replace("/", "_")
 }
 
 async function generateApiKeys () {
