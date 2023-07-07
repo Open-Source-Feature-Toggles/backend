@@ -1,6 +1,26 @@
 const { randomBytes } = require('crypto')
 const Project = require('../models/api/project')
 
+function getApiHeaders (req) {
+    return req.headers.authorization
+}
+
+function isProductionKey (apiKey) {
+    if (apiKey.split('.')[0] === 'PRODUCTION'){
+        return true
+    } else {
+        return false 
+    }
+}
+
+function isDevelopmentKey (apiKey) {
+    if (apiKey.split('.')[0] === 'DEVELOPMENT'){
+        return true
+    } else {
+        return false 
+    }
+}
+
 function generateDevelopmentKey () {
     return "DEVELOPMENT." + randomBytes(64).toString('base64').replace("/", "_").replace(".", "-")
 }
@@ -27,5 +47,8 @@ async function generateApiKeys () {
 }
 
 module.exports = {
-    generateApiKeys
+    getApiHeaders, 
+    isProductionKey, 
+    isDevelopmentKey, 
+    generateApiKeys, 
 }
