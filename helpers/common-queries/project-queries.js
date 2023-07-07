@@ -9,31 +9,18 @@ function projectQuery (projectName, username) {
     })
 }
 
-async function queryProjectByProductionKey (apiKey) {
-    let productionKeyQuery = Project.findOne({
-        productionApiKey : apiKey
+async function queryByApiKey (apiKey) {
+    return Project.findOne({
+        $or : [
+            { productionApiKey : apiKey }, 
+            { developmentApiKey : apiKey }, 
+        ]
     })
-    let developmentKeyQuery = Project.findOne({
-        developmentApiKey : apiKey, 
-    })
-    let [ productionProject, developmentProject ] = await Promise.all([
-        productionKeyQuery, 
-        developmentKeyQuery, 
-    ])
-    console.log(productionProject)
-    console.log(developmentProject)
-    if (productionProject) {
-        return { "one" : productionProject }
-    }
-    else {
-        return { "two" : developmentProject }
-    }
 }
-
 
 
 
 module.exports = { 
     projectQuery,  
-    queryProjectByProductionKey
+    queryByApiKey
 } 
