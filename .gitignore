@@ -28,3 +28,7 @@ dist-ssr
 refresh-token-jwt
 
 ./auth
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
