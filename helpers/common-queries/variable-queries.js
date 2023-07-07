@@ -25,7 +25,16 @@ function findVariableQuery ( name, owner, parentFeature ) {
     })
 }
 
+
+function QueryVariablesById ( list_of_variable_ids ) {
+    return Variable.find({
+        _id : { $in : list_of_variable_ids }
+    })
+}
+
+
 module.exports = {
     findVariableParentQuery, 
-    findVariableQuery
+    findVariableQuery, 
+    QueryVariablesById
 }
