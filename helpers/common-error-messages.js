@@ -18,8 +18,12 @@ function PasswordConfirmPasswordError ( res ) {
     return res.status(409).json({ errors : "Password and Confirm Password Must Match" })
 }
 
-function noApiKeyHeaders ( res ) {
+function MissingApiKeyError ( res ) {
     return res.status(404).json({ errors : "No Api Key Provided" })
+}
+
+function BadApiKeyError ( res ) {
+    return res.status(401).json({ errors : "Bad Api Key" })
 }
 
 
@@ -29,5 +33,6 @@ module.exports = {
     ResourceNotFoundError, 
     NameAlreadyExistsError, 
     PasswordConfirmPasswordError,
-    noApiKeyHeaders,  
+    MissingApiKeyError,  
+    BadApiKeyError, 
 }
