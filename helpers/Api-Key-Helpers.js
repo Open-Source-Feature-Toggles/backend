@@ -33,8 +33,8 @@ async function generateApiKeys () {
     let goodKey = false 
     let productionApiKey, developmentApiKey
     while (!goodKey) {
-        productionApiKey = generateDevelopmentKey()
-        developmentApiKey = generateProductionKey()
+        productionApiKey = generateProductionKey()
+        developmentApiKey = generateDevelopmentKey()
         let { clientKeyExists, developmentKeyExists } = await Promise.all([
             Project.findOne({ productionApiKey }), 
             Project.findOne({ developmentApiKey })
