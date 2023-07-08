@@ -6,7 +6,7 @@ const {
     Name_ProjectName_Validation, 
     Make_New_Feature_Validation
 } = require('../../../middlewares/form-validation/feature-validators')
-const FeatureExistsQuery = require('../../../helpers/common-queries/feature-queries')
+const { FeatureExistsQuery } = require('../../../helpers/common-queries/feature-queries')
 const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 
 
@@ -116,6 +116,7 @@ async function MakeNewFeature (req, res) {
             developmentEnabled : false, 
             productionEnabled : false, 
             parentProjectName : getProject.name,
+            parentProjectID : getProject._id, 
             productionApiKey : getProject.productionApiKey, 
             developmentApiKey : getProject.developmentApiKey, 
             owner : req.user, 
