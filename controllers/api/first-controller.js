@@ -1,15 +1,12 @@
 const { queryByApiKey } = require('../../helpers/common-queries/project-queries')
 const { QueryVariablesById } = require('../../helpers/common-queries/variable-queries')
+const { BadApiKeyError } = require('../../helpers/common-error-messages')
+const { setCache } = require('../../helpers/Cache-Helpers')
 const {
     QueryDevelopmentFeatures, 
     QueryProductionFeatures, 
 } = require('../../helpers/common-queries/feature-queries')
 const { 
-    BadApiKeyError,
-    MissingApiKeyError, 
-} = require('../../helpers/common-error-messages')
-const { 
-    getApiHeaders, 
     isProductionKey, 
     isDevelopmentKey
 } = require('../../helpers/Api-Key-Helpers')
@@ -22,10 +19,7 @@ const {
 
 async function load_entire_project (req, res) {
     try {
-        let apiKey = getApiHeaders(req)
-        if (!apiKey) {
-            return MissingApiKeyError(res)
-        }
+        let apiKey = req.apiKey
         let project = await queryByApiKey(apiKey)
         if (!project) {
             return BadApiKeyError(res)
@@ -43,6 +37,7 @@ async function load_entire_project (req, res) {
         features = FlattenFeatures(features)
         let variables = await QueryVariablesById(features)
         let payload = BuildPayload(variables)
+        setCache(apiKey, payload.last_updated)
         res.json(payload)
     } catch (error) {
         res.status(500)
