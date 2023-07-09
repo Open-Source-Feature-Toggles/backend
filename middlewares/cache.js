@@ -1,38 +1,34 @@
 const redisClient = require('../providers/redisClient')
-const { noApiKeyHeaders } = require('../helpers/common-error-messages')
+const { 
+    MissingApiKeyError, 
+
+} = require('../helpers/common-error-messages')
+const { getApiHeaders } = require('../helpers/Api-Key-Helpers')
+const { SearchCache } = require('../helpers/Cache-Helpers')
+const { CachedResourceValid } = require('../helpers/http-responses/Success-Messages')
 
 // Anytime that a feature or variable is updated, then the
 // cache needs to be updated with the most current date 
 
-function getApiHeaders (req, res) {
-    let authHeader = req.headers.authorization 
-    if (!authHeader){
-        return noApiKeyHeaders(res)
+
+async function FindCachedPayload (req, res, next) {
+    let apiKey = getApiHeaders(req)
+    req.apiKey = apiKey
+    let client_last_updated = req.query.last_updated
+    if (!apiKey) {
+        return MissingApiKeyError(res)
     }
-    return authHeader
-}
-
-
-
-
-async function checkCache (req, res, next) {
-    let authHeader = getApiHeaders(req, res)
-    let getCachedHeader = await redisClient.get(authHeader)
-    if (!getCachedHeader) { return next() }
-    
-}
-
-
-
-
-
-
-
-function sayHay () {
-    console.log("HAY!")
+    if (!client_last_updated) {
+        return next()
+    }
+    let cachedResource = await SearchCache(apiKey)
+    if (cachedResource === client_last_updated) {
+        return CachedResourceValid(res)
+    }
+    next()
 }
 
 
 module.exports = {
-    sayHay, 
+    FindCachedPayload, 
 }
