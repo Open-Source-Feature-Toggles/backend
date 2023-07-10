@@ -6,9 +6,10 @@ function FlattenFeatures (features_array) {
 
 
 function BuildPayload ( variables_array ) {
+    debugger
     let payload = { 
         'variables' : {}, 
-        'last_updated' : new Date()
+        'last_updated' : Date.now(), 
     }
     variables_array.forEach(variable => {
         if (payload['variables'][variable.parentFeatureName]) {

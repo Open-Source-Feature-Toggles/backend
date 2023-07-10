@@ -32,3 +32,5 @@ refresh-token-jwt
 .flaskenv*
 !.env.project
 !.env.vault
+
+/dump.rdb

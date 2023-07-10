@@ -1,6 +1,6 @@
 const { BadApiKeyError } = require('../../helpers/common-error-messages')
 const { getApiHeaders } = require('../../helpers/Api-Key-Helpers')
-const { SearchCache } = require('../../helpers/Cache-Helpers')
+const { SearchCache } = require('../../helpers/caching/Cache-Helpers')
 const { CachedResourceValid } = require('../../helpers/http-responses/Success-Messages')
 
 async function GetPayload (req, res) {
