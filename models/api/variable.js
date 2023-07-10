@@ -6,8 +6,7 @@ const variableSchema = new Schema({
     active : { type : Schema.Types.Boolean, require : true}, 
     parentFeatureName: { type: Schema.Types.String, require: true },
     parentFeatureID : { type: Schema.Types.ObjectId, require: true },  
-    owner: { type: Schema.Types.String, require: true }, 
-    created : { type: Schema.Types.Date, require: true } 
-})
+    owner: { type: Schema.Types.String, require: true },  
+}, { timestamps : true })
 
 module.exports = mongoose.model('Variable', variableSchema)

@@ -21,7 +21,6 @@ const featureSchema = new Schema({
     productionApiKey : { type : Schema.Types.String, require: true }, 
     developmentApiKey : { type : Schema.Types.String, require: true },
     owner: { type: Schema.Types.String, require: true }, 
-    created : { type: Schema.Types.Date, require: true } 
-})
+}, { timestamps : true })
 
 module.exports = mongoose.model('Feature', featureSchema) 
