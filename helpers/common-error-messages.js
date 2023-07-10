@@ -26,6 +26,10 @@ function BadApiKeyError ( res ) {
     return res.status(401).json({ errors : "Bad Api Key" })
 }
 
+function BadRequest ( res ) {
+    return res.sendStatus(400)
+}
+
 
 module.exports = {
     BadTokenError, 
@@ -35,4 +39,5 @@ module.exports = {
     PasswordConfirmPasswordError,
     MissingApiKeyError,  
     BadApiKeyError, 
+    BadRequest, 
 }

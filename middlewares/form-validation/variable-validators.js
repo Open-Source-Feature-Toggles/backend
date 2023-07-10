@@ -45,6 +45,16 @@ const UpdateVariableStatusValidator = [
         .trim()
         .notEmpty().withMessage("Missing Parent Feature Name")
         .escape(), 
+    body("production")
+        .trim()
+        .notEmpty().withMessage("Missing Production Status")
+        .isBoolean()
+        .escape(),
+    body("development")
+        .trim()
+        .notEmpty().withMessage("Missing Development Status")
+        .isBoolean()
+        .escape(),
 ]
 
 

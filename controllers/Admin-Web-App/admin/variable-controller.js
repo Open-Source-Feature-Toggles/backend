@@ -1,5 +1,9 @@
 const Variable = require('../../../models/api/variable')
-const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
+const { 
+    ResourceNotFoundError, 
+    NameAlreadyExistsError, 
+    BadRequest,  
+} = require('../../../helpers/common-error-messages')
 const { 
     MakeNewVariableValidation, 
     DeleteVariableValidation, 
@@ -87,14 +91,29 @@ async function UpdateVariableStatus (req, res) {
         let { 
             name, 
             parentFeature, 
-        } = req.body 
+            production, 
+            development, 
+        } = req.body
+        production = production === 'true'
+        development = development === 'true'
+        if (!production && !development || production && development ) {
+            return BadRequest(res)
+        } 
         let getVariable = await findVariableQuery(name, req.user, parentFeature).exec()
         if (!getVariable){
             return ResourceNotFoundError(res, "Variable")
         }
-        getVariable.active = !getVariable.active
+        let status 
+        if (production){
+            getVariable.productionEnabled = !getVariable.productionEnabled
+            status = { 'production' : getVariable.productionEnabled } 
+        }
+        else {
+            getVariable.developmentEnabled = !getVariable.developmentEnabled
+            status = { 'development' : getVariable.developmentEnabled }
+        }
         await getVariable.save()
-        res.status(200).json({ active_status : getVariable.active })
+        res.status(200).json( status )
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
