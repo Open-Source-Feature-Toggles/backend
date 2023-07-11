@@ -36,8 +36,8 @@ const DeleteVariableValidator = [
         .escape(), 
 ]
 
-const UpdateVariableStatusValidator = [
-    body("name")
+const UpdateStatusValidator = [
+    body("name") 
         .trim()
         .notEmpty().withMessage("Missing Variable Name")
         .escape(), 
@@ -45,16 +45,10 @@ const UpdateVariableStatusValidator = [
         .trim()
         .notEmpty().withMessage("Missing Parent Feature Name")
         .escape(), 
-    body("production")
+    body("parentProject")
         .trim()
-        .notEmpty().withMessage("Missing Production Status")
-        .isBoolean()
-        .escape(),
-    body("development")
-        .trim()
-        .notEmpty().withMessage("Missing Development Status")
-        .isBoolean()
-        .escape(),
+        .notEmpty().withMessage("Missing Parent Project Name")
+        .escape(), 
 ]
 
 
@@ -68,7 +62,7 @@ exports.DeleteVariableValidation = [
     ValidationError, 
 ]
 
-exports.UpdateVariableStatusValidation = [
-    UpdateVariableStatusValidator, 
+exports.UpdateStatusValidation = [
+    UpdateStatusValidator, 
     ValidationError, 
 ]

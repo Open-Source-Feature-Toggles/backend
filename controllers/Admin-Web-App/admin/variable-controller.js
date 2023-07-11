@@ -7,7 +7,7 @@ const {
 const { 
     MakeNewVariableValidation, 
     DeleteVariableValidation, 
-    UpdateVariableStatusValidation, 
+    UpdateStatusValidation, 
 } = require('../../../middlewares/form-validation/variable-validators')
 const { 
     findVariableParentQuery,  
@@ -86,34 +86,39 @@ async function DeleteVariable (req, res) {
 }
 
 
-async function UpdateVariableStatus (req, res) {
+async function UpdateProductionStatus (req, res) {
     try {
-        let { 
+        let {
             name, 
             parentFeature, 
-            production, 
-            development, 
         } = req.body
-        production = production === 'true'
-        development = development === 'true'
-        if (!production && !development || production && development ) {
-            return BadRequest(res)
-        } 
-        let getVariable = await findVariableQuery(name, req.user, parentFeature).exec()
-        if (!getVariable){
+        let getVariable = await findVariableQuery(name, req.user, parentFeature)
+        if (!getVariable) {
             return ResourceNotFoundError(res, "Variable")
         }
-        let status 
-        if (production){
-            getVariable.productionEnabled = !getVariable.productionEnabled
-            status = { 'production' : getVariable.productionEnabled } 
-        }
-        else {
-            getVariable.developmentEnabled = !getVariable.developmentEnabled
-            status = { 'development' : getVariable.developmentEnabled }
-        }
+        getVariable.productionEnabled = !getVariable.productionEnabled
         await getVariable.save()
-        res.status(200).json( status )
+        res.status(200).json({ productionEnabled : getVariable.productionEnabled })
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+    }
+}
+
+
+async function UpdateDevelopmentStatus ( req, res ) {
+    try {
+        let {
+            name, 
+            parentFeature, 
+        } = req.body
+        let getVariable = await findVariableQuery(name, req.user, parentFeature)
+        if (!getVariable) {
+            return ResourceNotFoundError(res, "Variable")
+        }
+        getVariable.developmentEnabled = !getVariable.developmentEnabled
+        await getVariable.save()
+        res.status(200).json({ developmentEnabled : getVariable.developmentEnabled })
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -131,7 +136,12 @@ exports.DELETE_delete_variable = [
     DeleteVariable, 
 ]
 
-exports.POST_update_variable_status = [
-    UpdateVariableStatusValidation, 
-    UpdateVariableStatus, 
+exports.POST_update_production_status = [
+    UpdateStatusValidation, 
+    UpdateProductionStatus, 
+]
+
+exports.POST_update_development_status = [
+    UpdateStatusValidation, 
+    UpdateDevelopmentStatus,
 ]
