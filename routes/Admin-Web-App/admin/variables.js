@@ -7,13 +7,18 @@ const {
     POST_update_production_status, 
     POST_update_development_status, 
 } = require('../../../controllers/Admin-Web-App/admin/variable-controller')
+const {
+    RebuildDevCache, 
+    RebuildProdCache,     
+} = require('../../../helpers/caching/Cache-Handlers')
+
 
 
 router.post("/make-new-variable", ProtectAuthRoutes, POST_make_new_variable)
 
-router.post("/update-production-status", ProtectAuthRoutes, POST_update_production_status)
+router.post("/update-production-status", ProtectAuthRoutes, POST_update_production_status, RebuildProdCache)
 
-router.post("/update-development-status", ProtectAuthRoutes, POST_update_development_status)
+router.post("/update-development-status", ProtectAuthRoutes, POST_update_development_status, RebuildDevCache)
 
 router.delete("/delete-variable", ProtectAuthRoutes, DELETE_delete_variable)
 

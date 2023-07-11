@@ -10,7 +10,7 @@ const { FeatureExistsQuery } = require('../../../helpers/common-queries/feature-
 const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 
 
-async function ChangeProductionStatus (req, res) {
+async function ChangeProductionStatus (req, res, next) {
     try {   
         let { 
             featureName,  
@@ -23,13 +23,14 @@ async function ChangeProductionStatus (req, res) {
         feature.productionEnabled = !feature.productionEnabled
         await feature.save()
         res.status(200).json({ production_status : feature.productionEnabled })
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
     }
 }
 
-async function ChangeDevelopmentStatus (req, res) {
+async function ChangeDevelopmentStatus (req, res, next) {
     try {   
         let { 
             featureName, 
@@ -42,6 +43,7 @@ async function ChangeDevelopmentStatus (req, res) {
         feature.developmentEnabled = !feature.developmentEnabled
         await feature.save()
         res.status(200).json({ production_status : feature.developmentEnabled })
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)

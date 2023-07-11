@@ -7,11 +7,15 @@ const {
     POST_delete_feature,
     POST_make_new_feature 
 } = require("../../../controllers/Admin-Web-App/admin/feature-controller")
+const {
+    RebuildDevCache, 
+    RebuildProdCache,     
+} = require('../../../helpers/caching/Cache-Handlers')
 
 
-router.post("/change-production-status", ProtectAuthRoutes, POST_change_production_status)
+router.post("/change-production-status", ProtectAuthRoutes, POST_change_production_status, RebuildProdCache)
 
-router.post("/change-development-status", ProtectAuthRoutes, POST_change_development_status)
+router.post("/change-development-status", ProtectAuthRoutes, POST_change_development_status, RebuildDevCache)
 
 router.post("/make-new-feature", ProtectAuthRoutes, POST_make_new_feature)
 

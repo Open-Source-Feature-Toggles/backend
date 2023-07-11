@@ -86,8 +86,9 @@ async function DeleteVariable (req, res) {
 }
 
 
-async function UpdateProductionStatus (req, res) {
+async function UpdateProductionStatus (req, res, next) {
     try {
+        debugger
         let {
             name, 
             parentFeature, 
@@ -99,6 +100,7 @@ async function UpdateProductionStatus (req, res) {
         getVariable.productionEnabled = !getVariable.productionEnabled
         await getVariable.save()
         res.status(200).json({ productionEnabled : getVariable.productionEnabled })
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -106,8 +108,9 @@ async function UpdateProductionStatus (req, res) {
 }
 
 
-async function UpdateDevelopmentStatus ( req, res ) {
+async function UpdateDevelopmentStatus ( req, res, next ) {
     try {
+        debugger
         let {
             name, 
             parentFeature, 
@@ -119,6 +122,7 @@ async function UpdateDevelopmentStatus ( req, res ) {
         getVariable.developmentEnabled = !getVariable.developmentEnabled
         await getVariable.save()
         res.status(200).json({ developmentEnabled : getVariable.developmentEnabled })
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
