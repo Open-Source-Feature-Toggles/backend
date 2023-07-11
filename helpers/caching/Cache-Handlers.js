@@ -1,4 +1,7 @@
-const { setCache } = require('./Redis-Helpers')
+const { 
+    setCache, 
+    removeKey 
+} = require('./Redis-Helpers')
 const { projectQuery } = require('../../helpers/common-queries/project-queries')
 const { 
     QueryProductionFeatures, 
@@ -66,22 +69,53 @@ async function RebuildProdCache (req, res) {
 }
 
 
-// async function RebuildBothCaches (req, res) {
-//     try {
-//         let { projectName } = req.body
-//         let user = req.user
-//         let project = await projectQuery(projectName, user) 
-//         console.log('Successfully Destroyed Prod and Dev Cache')
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
+async function RebuildBothCaches (req, res) {
+    try {
+        let { projectName } = req.body
+        let user = req.user
+        let project = await projectQuery(projectName, user) 
+        let [developmentFeatures, productionFeatures] = await Promise.all([
+            QueryDevelopmentFeatures(project.developmentApiKey, user), 
+            QueryProductionFeatures(project.productionApiKey, user)
+        ])
+        let developmentVariables = extractVariables(developmentFeatures)
+        let productionVariables = extractVariables(productionFeatures)
+        let [getDevelopmentVariables, getProductionVariables] = await Promise.all([
+            QueryVariablesById(developmentVariables), 
+            QueryVariablesById(productionVariables), 
+        ])
+        let developmentPayload = buildPayload(getDevelopmentVariables, 'developmentEnabled')
+        let productionPayload = buildPayload(getProductionVariables, 'productionEnabled')
+        await Promise.all([
+            setCache(project.developmentApiKey, developmentPayload), 
+            setCache(project.productionApiKey, productionPayload), 
+        ])
+        console.log('Successfully Rebuilt Prod and Dev Cache')
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 
-
+async function DestroyCachedResults (req, res) {
+    try {
+        let { 
+            productionApiKey,  
+            developmentApiKey, 
+        } = req
+        await Promise.all([
+            removeKey(productionApiKey), 
+            removeKey(developmentApiKey),
+        ])
+        console.log('Successfully Destroyed Prod and Dev Cache')
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 
 module.exports = {
     RebuildDevCache, 
     RebuildProdCache, 
+    DestroyCachedResults, 
 }
