@@ -10,8 +10,8 @@ const featureSchema = new Schema({
         require: true, 
     }], 
     description : { type: Schema.Types.String }, 
-    developmentEnabled : { type: Schema.Types.Boolean, require : true }, 
-    productionEnabled : { type: Schema.Types.Boolean, require : true }, 
+    developmentEnabled : { type: Schema.Types.Boolean, require : true, default : false }, 
+    productionEnabled : { type: Schema.Types.Boolean, require : true, default : false }, 
     parentProjectName : { 
         type : Schema.Types.String, 
         ref : "project", 
