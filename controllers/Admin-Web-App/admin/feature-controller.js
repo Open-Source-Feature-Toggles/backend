@@ -51,9 +51,6 @@ async function ChangeDevelopmentStatus (req, res, next) {
 }
 
 async function DeleteFeature (req, res) {
-    // Use ACID to ensure all data is deleted or none is deleted at all
-    const session = await mongoose.startSession()
-    session.startTransaction()
     try {
         let { 
             featureName, 
@@ -74,12 +71,8 @@ async function DeleteFeature (req, res) {
             Variable.deleteMany({ _id: { $in: feature.variables } }), 
             Feature.findByIdAndDelete(feature._id), 
         ])
-        await session.commitTransaction()
-        session.endSession()
         res.sendStatus(200)
     } catch (error) {
-        await session.abortTransaction()
-        session.endSession()
         console.error(error)
         res.sendStatus(500)
     }
