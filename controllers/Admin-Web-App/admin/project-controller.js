@@ -7,10 +7,10 @@ const { generateApiKeys } = require('../../../helpers/Api-Key-Helpers')
 
 async function MakeNewProject (req, res) {
     try {
-        let { name } = req.body
+        let { projectName } = req.body
         let projectExists = await Project.findOne({ 
             $and : [
-                { name }, 
+                { projectName }, 
                 { owner : req.user }, 
             ]    
         }).exec()
@@ -19,7 +19,7 @@ async function MakeNewProject (req, res) {
         }
         let [ productionApiKey, developmentApiKey ] = await generateApiKeys()
         let newProject = new Project({
-            name,  
+            name : projectName,  
             features: [],
             owner: req.user, 
             created: new Date(), 
@@ -38,10 +38,10 @@ async function MakeNewProject (req, res) {
 async function DeleteProject (req, res) {
     try {
         try {
-            let { name } = req.body
+            let { projectName } = req.body
             let project = await Project.findOne({ 
                 $and : [
-                    { name }, 
+                    { name : projectName }, 
                     { owner : req.user }, 
                 ]
             }).exec()

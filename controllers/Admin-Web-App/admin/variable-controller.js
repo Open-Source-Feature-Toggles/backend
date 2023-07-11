@@ -21,10 +21,10 @@ async function MakeNewVariable (req, res) {
             name, 
             active, 
             parentFeature, 
-            parentProject, 
+            projectName, 
         } = req.body
         let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-            findVariableParentQuery(parentFeature, req.user, parentProject),
+            findVariableParentQuery(parentFeature, req.user, projectName),
             findVariableQuery(name, req.user, parentFeature)
         ])
         if (!findParentFeature){
@@ -59,10 +59,10 @@ async function DeleteVariable (req, res) {
         let {
             name, 
             parentFeature, 
-            parentProject, 
+            projectName, 
         } = req.body
         let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-            findVariableParentQuery(parentFeature, req.user, parentProject),
+            findVariableParentQuery(parentFeature, req.user, projectName),
             findVariableQuery(name, req.user, parentFeature)
         ])
         if (!findParentFeature){
