@@ -35,29 +35,27 @@ async function MakeNewProject (req, res) {
 }
 
 
-async function DeleteProject (req, res) {
+async function DeleteProject (req, res, next) {
     try {
-        try {
-            let { projectName } = req.body
-            let project = await Project.findOne({ 
-                $and : [
-                    { name : projectName }, 
-                    { owner : req.user }, 
-                ]
-            }).exec()
-            if (!project) { 
-                return ResourceNotFoundError(res, "Project")  
-            }
-            await Promise.all([
-                Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
-                Feature.deleteMany({ parentProjectID : project._id }),
-                Project.findByIdAndDelete(project._id),
-            ])
-            res.sendStatus(200)
-        } catch (error) {
-            res.sendStatus(500)
-            console.error(error)
+        let { projectName } = req.body
+        let project = await Project.findOne({ 
+            $and : [
+                { name : projectName }, 
+                { owner : req.user }, 
+            ]
+        }).exec()
+        if (!project) { 
+            return ResourceNotFoundError(res, "Project")  
         }
+        await Promise.all([
+            Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
+            Feature.deleteMany({ parentProjectID : project._id }),
+            Project.findByIdAndDelete(project._id),
+        ])
+        res.sendStatus(200)
+        req.productionApiKey = project.productionApiKey
+        req.developmentApiKey = project.developmentApiKey
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
