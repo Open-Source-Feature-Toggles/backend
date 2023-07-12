@@ -12,6 +12,9 @@ const {
 } = require('../../helpers/common-queries/variable-queries')
 
 
+const DEVELOPMENT_ENABLED = 'developmentEnabled'
+const PRODUCTION_ENABLED = 'productionEnabled'
+
 function extractVariables (features) {
     return features.map( (feature, _) => {
         return feature.variables
@@ -43,7 +46,7 @@ async function RebuildDevCache (req, res) {
         let features = await QueryDevelopmentFeatures(project.developmentApiKey)
         let variables = extractVariables(features)
         variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, 'developmentEnabled')
+        let payload = buildPayload(variables, DEVELOPMENT_ENABLED)
         await setCache(project.developmentApiKey, payload)
         console.log('Successfully Rebuilt Dev Cache')
     } catch (error) {
@@ -60,7 +63,7 @@ async function RebuildProdCache (req, res) {
         let features = await QueryProductionFeatures(project.productionApiKey)
         let variables = extractVariables(features)
         variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, 'productionEnabled')
+        let payload = buildPayload(variables, PRODUCTION_ENABLED)
         await setCache(project.productionApiKey, payload)
         console.log('Successfully Rebuilt Prod Cache')
     } catch (error) {
@@ -78,14 +81,14 @@ async function RebuildBothCaches (req, res) {
             QueryDevelopmentFeatures(project.developmentApiKey, user), 
             QueryProductionFeatures(project.productionApiKey, user)
         ])
-        let developmentVariables = extractVariables(developmentFeatures)
-        let productionVariables = extractVariables(productionFeatures)
+        let developmentVariableIds = extractVariables(developmentFeatures)
+        let productionVariableIds = extractVariables(productionFeatures)
         let [getDevelopmentVariables, getProductionVariables] = await Promise.all([
-            QueryVariablesById(developmentVariables), 
-            QueryVariablesById(productionVariables), 
+            QueryVariablesById(developmentVariableIds), 
+            QueryVariablesById(productionVariableIds), 
         ])
-        let developmentPayload = buildPayload(getDevelopmentVariables, 'developmentEnabled')
-        let productionPayload = buildPayload(getProductionVariables, 'productionEnabled')
+        let developmentPayload = buildPayload(getDevelopmentVariables, DEVELOPMENT_ENABLED)
+        let productionPayload = buildPayload(getProductionVariables, PRODUCTION_ENABLED)
         await Promise.all([
             setCache(project.developmentApiKey, developmentPayload), 
             setCache(project.productionApiKey, productionPayload), 
@@ -117,5 +120,6 @@ async function DestroyCachedResults (req, res) {
 module.exports = {
     RebuildDevCache, 
     RebuildProdCache, 
+    RebuildBothCaches, 
     DestroyCachedResults, 
 }
