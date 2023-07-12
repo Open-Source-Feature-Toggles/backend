@@ -10,6 +10,7 @@ const {
 const {
     RebuildDevCache, 
     RebuildProdCache,     
+    RebuildBothCaches, 
 } = require('../../../helpers/caching/Cache-Handlers')
 
 
@@ -20,6 +21,6 @@ router.post("/update-production-status", ProtectAuthRoutes, POST_update_producti
 
 router.post("/update-development-status", ProtectAuthRoutes, POST_update_development_status, RebuildDevCache)
 
-router.delete("/delete-variable", ProtectAuthRoutes, DELETE_delete_variable)
+router.delete("/delete-variable", ProtectAuthRoutes, DELETE_delete_variable, RebuildBothCaches)
 
 module.exports = router

@@ -9,7 +9,8 @@ const {
 } = require("../../../controllers/Admin-Web-App/admin/feature-controller")
 const {
     RebuildDevCache, 
-    RebuildProdCache,     
+    RebuildProdCache,   
+    RebuildBothCaches,   
 } = require('../../../helpers/caching/Cache-Handlers')
 
 
@@ -19,7 +20,7 @@ router.post("/change-development-status", ProtectAuthRoutes, POST_change_develop
 
 router.post("/make-new-feature", ProtectAuthRoutes, POST_make_new_feature)
 
-router.delete("/delete-feature", ProtectAuthRoutes, POST_delete_feature)
+router.delete("/delete-feature", ProtectAuthRoutes, POST_delete_feature, RebuildBothCaches )
 
 
 module.exports = router

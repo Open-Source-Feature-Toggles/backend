@@ -50,7 +50,7 @@ async function ChangeDevelopmentStatus (req, res, next) {
     }
 }
 
-async function DeleteFeature (req, res) {
+async function DeleteFeature (req, res, next) {
     try {
         let { 
             featureName, 
@@ -72,6 +72,7 @@ async function DeleteFeature (req, res) {
             Feature.findByIdAndDelete(feature._id), 
         ])
         res.sendStatus(200)
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
