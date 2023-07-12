@@ -1,4 +1,6 @@
-const { BadApiKeyError } = require('../../helpers/common-error-messages')
+const { 
+    BadApiKeyError,  
+} = require('../../helpers/common-error-messages')
 const { 
     setCache, 
     removeKey 
@@ -18,11 +20,13 @@ const {
 
 const DEVELOPMENT_ENABLED = 'developmentEnabled'
 const PRODUCTION_ENABLED = 'productionEnabled'
+const DEVELOPMENT_API_KEY = 'developmentApiKey'
+const PRODUCTION_API_KEY = 'productionApiKey'
+const DEV = 'Dev'
+const PROD = 'Prod'
 
 function extractVariables (features) {
-    return features.map( (feature, _) => {
-        return feature.variables
-    }).flat()
+    return features.flatMap( feature => { return feature.variables })
 }
 
 function buildPayload (variables, status) {
@@ -40,71 +44,57 @@ function buildPayload (variables, status) {
     return payload
 }
 
-
-async function RebuildDevCache (req, res) {
-    try{
+async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
+    try {
         debugger
-        let { projectName } = req.body
-        let user = req.user
-        let project = await projectQuery(projectName, user)
-        let features = await QueryDevelopmentFeatures(project.developmentApiKey)
+        let project, user = req.user
+        if (passedProject) {
+            project = passedProject
+        }
+        else {
+            let { projectName } = req.body
+            project = await projectQuery(projectName, user)
+            if (!project) { 
+                throw new Error('Bad Project Name Supplied')
+            }
+        } 
+        let features = await QueryFeaturesFunction(project[apiKey])
         let variables = extractVariables(features)
         variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, DEVELOPMENT_ENABLED)
-        await setCache(project.developmentApiKey, payload)
-        console.log('Successfully Rebuilt Dev Cache')
+        let payload = buildPayload(variables, enabledType)
+        await setCache(project[apiKey], payload)
+        console.log(`Successfully Rebuilt ${cacheType} Cache`)
     } catch (error) {
         console.error(error)
     }
 }
 
-async function RebuildProdCache (req, res) {
-    try {
-        debugger
-        let { projectName } = req.body
-        let user = req.user
-        let project = await projectQuery(projectName, user)
-        let features = await QueryProductionFeatures(project.productionApiKey)
-        let variables = extractVariables(features)
-        variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, PRODUCTION_ENABLED)
-        await setCache(project.productionApiKey, payload)
-        console.log('Successfully Rebuilt Prod Cache')
-    } catch (error) {
-        console.error(error)
-    }
+async function RebuildDevCache (req, res, next, project=null) {
+    await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
+}
+
+async function RebuildProdCache (req, res, next, project=null) {
+    debugger
+    await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
 }
 
 
-async function RebuildBothCaches (req, res) {
+async function RebuildBothCaches (req) {
     try {
         let { projectName } = req.body
         let user = req.user
-        let project = await projectQuery(projectName, user) 
-        let [developmentFeatures, productionFeatures] = await Promise.all([
-            QueryDevelopmentFeatures(project.developmentApiKey, user), 
-            QueryProductionFeatures(project.productionApiKey, user)
-        ])
-        let developmentVariableIds = extractVariables(developmentFeatures)
-        let productionVariableIds = extractVariables(productionFeatures)
-        let [getDevelopmentVariables, getProductionVariables] = await Promise.all([
-            QueryVariablesById(developmentVariableIds), 
-            QueryVariablesById(productionVariableIds), 
-        ])
-        let developmentPayload = buildPayload(getDevelopmentVariables, DEVELOPMENT_ENABLED)
-        let productionPayload = buildPayload(getProductionVariables, PRODUCTION_ENABLED)
+        let project = await projectQuery(projectName, user)
         await Promise.all([
-            setCache(project.developmentApiKey, developmentPayload), 
-            setCache(project.productionApiKey, productionPayload), 
+            RebuildDevCache(req, null, null, project), 
+            RebuildProdCache(req, null, null, project), 
         ])
-        console.log('Successfully Rebuilt Prod and Dev Cache')
     } catch (error) {
         console.error(error)
     }
 }
 
 
-async function DestroyCachedResults (req, res) {
+async function DestroyCachedResults (req) {
     try {
         let { 
             productionApiKey,  
@@ -114,23 +104,26 @@ async function DestroyCachedResults (req, res) {
             removeKey(productionApiKey), 
             removeKey(developmentApiKey),
         ])
-        console.log('Successfully Destroyed Prod and Dev Cache')
+        console.log('Successfully Destroyed Prod and Dev Caches')
     } catch (error) {
         console.error(error)
     }
 }
 
 
-async function BuildPayloadOnTheFly (res, apiKey) {
+async function BuildPayloadOnTheFly (req, res, apiKey) {
     try {
         let getProject = await queryByApiKey(apiKey)
         if (!getProject){
             return BadApiKeyError(res)
         }
-        
-
+        await Promise.all([
+            RebuildDevCache(req, null, null, getProject), 
+            RebuildProdCache(req, null, null, getProject), 
+        ])
     } catch (error) {
         console.error(error)
+        res.status(500)
     }
 }
 
@@ -140,13 +133,5 @@ module.exports = {
     RebuildProdCache, 
     RebuildBothCaches, 
     DestroyCachedResults, 
+    BuildPayloadOnTheFly, 
 }
-
-/* 
-    TODO 
-
-    DRY - Don't repeat yourself... Try to simplify these functions 
-
-    Use flatMAP instead of flat 
-
-*/
