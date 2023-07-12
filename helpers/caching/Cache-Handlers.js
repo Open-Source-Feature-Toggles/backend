@@ -1,8 +1,12 @@
+const { BadApiKeyError } = require('../../helpers/common-error-messages')
 const { 
     setCache, 
     removeKey 
 } = require('./Redis-Helpers')
-const { projectQuery } = require('../../helpers/common-queries/project-queries')
+const { 
+    projectQuery, 
+    queryByApiKey, 
+} = require('../../helpers/common-queries/project-queries')
 const { 
     QueryProductionFeatures, 
     QueryDevelopmentFeatures, 
@@ -117,9 +121,32 @@ async function DestroyCachedResults (req, res) {
 }
 
 
+async function BuildPayloadOnTheFly (res, apiKey) {
+    try {
+        let getProject = await queryByApiKey(apiKey)
+        if (!getProject){
+            return BadApiKeyError(res)
+        }
+        
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
 module.exports = {
     RebuildDevCache, 
     RebuildProdCache, 
     RebuildBothCaches, 
     DestroyCachedResults, 
 }
+
+/* 
+    TODO 
+
+    DRY - Don't repeat yourself... Try to simplify these functions 
+
+    Use flatMAP instead of flat 
+
+*/

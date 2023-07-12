@@ -29,13 +29,15 @@ async function GetPayload (req, res) {
         let apiKey = getApiHeaders(req)
         let payload = await SearchCache(apiKey)
         let client_last_updated = Number(req.query.last_updated)
-        if (!payload){
-            return BadApiKeyError(res)
-        }
         if (payload?.last_updated === client_last_updated){
             return CachedResourceValid(res)
         }
-        return res.json(payload)
+        else if (payload){
+            return res.json(payload)
+        }
+        else {
+            return true // buildPayloadOnTheFly
+        }
     } catch (error) {
         res.status(500)
         console.error(error)
