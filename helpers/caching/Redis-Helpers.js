@@ -1,11 +1,13 @@
 const redisClient = require('../../providers/redisClient')
-const { projectQuery } = require('../common-queries/project-queries')
 
 
 async function SearchCache (apiKey) {
     try {
         let resource = await redisClient.get(apiKey)
-        return JSON.parse(resource)
+        if (resource) {
+            resource = JSON.parse(resource)
+        }
+        return resource
     } catch (error) {
         console.error(error)
     }
