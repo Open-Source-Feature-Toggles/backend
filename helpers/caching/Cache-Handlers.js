@@ -1,6 +1,5 @@
-const { 
-    BadApiKeyError,  
-} = require('../../helpers/common-error-messages')
+const { BadApiKeyError } = require('../../helpers/common-error-messages')
+const { QueryVariablesById } = require('../../helpers/common-queries/variable-queries')
 const { 
     setCache, 
     removeKey 
@@ -14,9 +13,10 @@ const {
     QueryDevelopmentFeatures, 
 } = require('../../helpers/common-queries/feature-queries')
 const {
-    QueryVariablesById, 
-} = require('../../helpers/common-queries/variable-queries')
-
+    extractVariables, 
+    buildPayload,
+    GetProject, 
+} = require('../../helpers/caching/Cache-Helpers')
 
 const DEVELOPMENT_ENABLED = 'developmentEnabled'
 const PRODUCTION_ENABLED = 'productionEnabled'
@@ -25,39 +25,21 @@ const PRODUCTION_API_KEY = 'productionApiKey'
 const DEV = 'Dev'
 const PROD = 'Prod'
 
-function extractVariables (features) {
-    return features.flatMap( feature => { return feature.variables })
+
+async function RebuildDevCache (req, res, next, project=null) {
+    debugger
+    await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
 }
 
-function buildPayload (variables, status) {
-    let payload = {
-        'features' : {}, 
-        'last_updated' : Date.now(), 
-    }
-    variables.forEach( variable => {
-        if (payload['features'][variable.parentFeatureName]) {
-            payload['features'][variable.parentFeatureName].push({ [variable.name]: variable[status] });
-        } else {
-            payload['features'][variable.parentFeatureName] = [{ [variable.name]: variable[status] }];
-        }
-    })
-    return payload
+async function RebuildProdCache (req, res, next, project=null) {
+    debugger
+    await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
 }
 
 async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
     try {
         debugger
-        let project, user = req.user
-        if (passedProject) {
-            project = passedProject
-        }
-        else {
-            let { projectName } = req.body
-            project = await projectQuery(projectName, user)
-            if (!project) { 
-                throw new Error('Bad Project Name Supplied')
-            }
-        } 
+        let project = await GetProject(req, passedProject)
         let features = await QueryFeaturesFunction(project[apiKey])
         let variables = extractVariables(features)
         variables = await QueryVariablesById(variables)
@@ -69,21 +51,9 @@ async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, pa
     }
 }
 
-async function RebuildDevCache (req, res, next, project=null) {
-    await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
-}
-
-async function RebuildProdCache (req, res, next, project=null) {
-    debugger
-    await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
-}
-
-
 async function RebuildBothCaches (req) {
     try {
-        let { projectName } = req.body
-        let user = req.user
-        let project = await projectQuery(projectName, user)
+        let project = await GetProject(req, null)
         await Promise.all([
             RebuildDevCache(req, null, null, project), 
             RebuildProdCache(req, null, null, project), 
@@ -92,7 +62,6 @@ async function RebuildBothCaches (req) {
         console.error(error)
     }
 }
-
 
 async function DestroyCachedResults (req) {
     try {
@@ -109,7 +78,6 @@ async function DestroyCachedResults (req) {
         console.error(error)
     }
 }
-
 
 async function BuildPayloadOnTheFly (req, res, apiKey) {
     try {
