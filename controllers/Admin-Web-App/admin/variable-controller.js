@@ -15,7 +15,7 @@ const {
 } = require('../../../helpers/common-queries/variable-queries')
 
 
-async function MakeNewVariable (req, res) {
+async function MakeNewVariable (req, res, next) {
     try {
         let {
             name, 
@@ -47,6 +47,7 @@ async function MakeNewVariable (req, res) {
             findParentFeature.save()
         ])             
         res.sendStatus(200)
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -56,6 +57,7 @@ async function MakeNewVariable (req, res) {
 
 async function DeleteVariable (req, res) {
     try {
+        debugger
         let {
             name, 
             parentFeature, 
@@ -88,7 +90,6 @@ async function DeleteVariable (req, res) {
 
 async function UpdateProductionStatus (req, res, next) {
     try {
-        debugger
         let {
             name, 
             parentFeature, 
@@ -110,7 +111,6 @@ async function UpdateProductionStatus (req, res, next) {
 
 async function UpdateDevelopmentStatus ( req, res, next ) {
     try {
-        debugger
         let {
             name, 
             parentFeature, 

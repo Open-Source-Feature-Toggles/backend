@@ -15,7 +15,7 @@ const {
 
 
 
-router.post("/make-new-variable", ProtectAuthRoutes, POST_make_new_variable)
+router.post("/make-new-variable", ProtectAuthRoutes, POST_make_new_variable, RebuildBothCaches)
 
 router.post("/update-production-status", ProtectAuthRoutes, POST_update_production_status, RebuildProdCache)
 
