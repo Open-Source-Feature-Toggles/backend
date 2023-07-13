@@ -4,16 +4,12 @@ const Variable = require('../../../models/api/variable')
 const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 const { projectValidation } = require('../../../middlewares/form-validation/project-validaters')
 const { generateApiKeys } = require('../../../helpers/Api-Key-Helpers')
+const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 
 async function MakeNewProject (req, res) {
     try {
         let { projectName } = req.body
-        let projectExists = await Project.findOne({ 
-            $and : [
-                { projectName }, 
-                { owner : req.user }, 
-            ]    
-        }).exec()
+        let projectExists = await projectQuery(projectName, req.user)
         if (projectExists){
             return NameAlreadyExistsError(res, "Project")
         }
@@ -38,12 +34,7 @@ async function MakeNewProject (req, res) {
 async function DeleteProject (req, res, next) {
     try {
         let { projectName } = req.body
-        let project = await Project.findOne({ 
-            $and : [
-                { name : projectName }, 
-                { owner : req.user }, 
-            ]
-        }).exec()
+        let project = await projectQuery(projectName, req.user)
         if (!project) { 
             return ResourceNotFoundError(res, "Project")  
         }
