@@ -18,7 +18,7 @@ router.post("/change-production-status", ProtectAuthRoutes, POST_change_producti
 
 router.post("/change-development-status", ProtectAuthRoutes, POST_change_development_status, RebuildDevCache)
 
-router.post("/make-new-feature", ProtectAuthRoutes, POST_make_new_feature)
+router.post("/make-new-feature", ProtectAuthRoutes, POST_make_new_feature, RebuildBothCaches)
 
 router.delete("/delete-feature", ProtectAuthRoutes, POST_delete_feature, RebuildBothCaches )
 

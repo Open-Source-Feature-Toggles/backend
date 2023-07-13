@@ -79,7 +79,7 @@ async function DeleteFeature (req, res, next) {
     }
 }
 
-async function MakeNewFeature (req, res) {
+async function MakeNewFeature (req, res, next) {
     try {
         let { 
             featureName, 
@@ -127,6 +127,7 @@ async function MakeNewFeature (req, res) {
             newFeature.save(), 
         ])
         res.sendStatus(200)
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
