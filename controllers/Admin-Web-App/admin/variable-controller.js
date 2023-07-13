@@ -57,7 +57,6 @@ async function MakeNewVariable (req, res, next) {
 
 async function DeleteVariable (req, res) {
     try {
-        debugger
         let {
             name, 
             parentFeature, 

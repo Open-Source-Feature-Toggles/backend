@@ -5,7 +5,6 @@ const {
     removeKey 
 } = require('./Redis-Helpers')
 const { 
-    projectQuery, 
     queryByApiKey, 
 } = require('../../helpers/common-queries/project-queries')
 const { 
@@ -27,18 +26,15 @@ const PROD = 'Prod'
 
 
 async function RebuildDevCache (req, res, next, project=null) {
-    debugger
     await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
 }
 
 async function RebuildProdCache (req, res, next, project=null) {
-    debugger
     await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
 }
 
 async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
     try {
-        debugger
         let project = await GetProject(req, passedProject)
         let features = await QueryFeaturesFunction(project[apiKey])
         let variables = extractVariables(features)
