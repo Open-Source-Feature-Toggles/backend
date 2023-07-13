@@ -10,8 +10,8 @@ const featureSchema = new Schema({
         require: true, 
     }], 
     description : { type: Schema.Types.String }, 
-    developmentEnabled : { type: Schema.Types.Boolean, require : true }, 
-    productionEnabled : { type: Schema.Types.Boolean, require : true }, 
+    developmentEnabled : { type: Schema.Types.Boolean, require : true, default : false }, 
+    productionEnabled : { type: Schema.Types.Boolean, require : true, default : false }, 
     parentProjectName : { 
         type : Schema.Types.String, 
         ref : "project", 
@@ -21,7 +21,6 @@ const featureSchema = new Schema({
     productionApiKey : { type : Schema.Types.String, require: true }, 
     developmentApiKey : { type : Schema.Types.String, require: true },
     owner: { type: Schema.Types.String, require: true }, 
-    created : { type: Schema.Types.Date, require: true } 
-})
+}, { timestamps : true })
 
 module.exports = mongoose.model('Feature', featureSchema) 

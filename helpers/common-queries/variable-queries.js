@@ -25,7 +25,6 @@ function findVariableQuery ( name, owner, parentFeature ) {
     })
 }
 
-
 function QueryVariablesById ( list_of_variable_ids ) {
     return Variable.find({
         _id : { $in : list_of_variable_ids }
@@ -33,8 +32,30 @@ function QueryVariablesById ( list_of_variable_ids ) {
 }
 
 
+function QueryDevelopmentVariables ( list_of_variable_ids ) {
+    return Variable.find({
+        $and : [
+            { _id : { $in : list_of_variable_ids }}, 
+            { developmentEnabled : true }, 
+        ]
+    })
+}
+
+function QueryProductionVariables ( list_of_variable_ids ) {
+    return Variable.find({
+        $and : [
+            { _id : { $in : list_of_variable_ids }}, 
+            { productionEnabled : true }, 
+        ]
+    })
+}
+
+
+
 module.exports = {
     findVariableParentQuery, 
     findVariableQuery, 
-    QueryVariablesById
+    QueryVariablesById, 
+    QueryDevelopmentVariables, 
+    QueryProductionVariables, 
 }

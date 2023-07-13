@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router() 
-const { load_entire_project } = require('../../controllers/api/first-controller')
+const { GetPayload } = require('../../controllers/api/payload')
 
-router.get("/everything", load_entire_project)
-
+router.get("/payload", GetPayload)
 
 module.exports = router 

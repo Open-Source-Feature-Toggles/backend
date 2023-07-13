@@ -12,26 +12,20 @@ function FeatureExistsQuery (name, username, projectName) {
     })
 }
 
-function QueryProductionFeatures (apiKey, projectID) {
+function QueryProductionFeatures (apiKey) {
     return Feature.find({
         $and : [
-            { $and : [
-                { productionApiKey : apiKey },
-                { parentProjectID : projectID }, 
-            ]}, 
-            { productionEnabled : true }
+            { productionEnabled : true }, 
+            { productionApiKey : apiKey },
         ]
     })
 }
 
-function QueryDevelopmentFeatures (apiKey, projectID) {
+function QueryDevelopmentFeatures (apiKey) {
     return Feature.find({
         $and : [
-            { $and : [
-                { developmentApiKey : apiKey },
-                { parentProjectID : projectID }, 
-            ]}, 
-            { developmentEnabled : true }
+            { developmentEnabled : true }, 
+            { developmentApiKey : apiKey },
         ]
     })
 }

@@ -1,0 +1,43 @@
+1. caching
+
+2. minor organizational things + tweaks 
+
+3. Maybe a few features that are needed to make api work 
+
+4. Fix error messages for caching
+
+
+
+
+
+
+
+Caching 
+-----------------------
+
+
+
+We have two sets of keys in the cache for a given project at any point in time : 
+    1. Production Api Key 
+    2. Developmnent Api Key 
+
+If a change is made to a production enabled feature, then the productionApiKey and its associated
+value in the cache need to be removed. The same holds true for developmentApiKey. 
+
+
+
+
+
+CACHING 2.0 
+
+Split the primary building and caching functions into two categories : 
+
+    1. Development
+
+    2. Production
+
+Anything that requires a developmentEnabled or productionEnabled change needs to be split into its own respective route 
+
+Anything that affects both e.g. a variable being deleted, requires both to be rebuilt
+
+Also, every admin web app route is going to require a parentProjectName in the body or somewhere therein

@@ -1,9 +1,13 @@
 const Variable = require('../../../models/api/variable')
-const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
+const { 
+    ResourceNotFoundError, 
+    NameAlreadyExistsError, 
+    BadRequest,  
+} = require('../../../helpers/common-error-messages')
 const { 
     MakeNewVariableValidation, 
     DeleteVariableValidation, 
-    UpdateVariableStatusValidation, 
+    UpdateStatusValidation, 
 } = require('../../../middlewares/form-validation/variable-validators')
 const { 
     findVariableParentQuery,  
@@ -11,16 +15,16 @@ const {
 } = require('../../../helpers/common-queries/variable-queries')
 
 
-async function MakeNewVariable (req, res) {
+async function MakeNewVariable (req, res, next) {
     try {
         let {
             name, 
             active, 
             parentFeature, 
-            parentProject, 
+            projectName, 
         } = req.body
         let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-            findVariableParentQuery(parentFeature, req.user, parentProject),
+            findVariableParentQuery(parentFeature, req.user, projectName),
             findVariableQuery(name, req.user, parentFeature)
         ])
         if (!findParentFeature){
@@ -43,6 +47,7 @@ async function MakeNewVariable (req, res) {
             findParentFeature.save()
         ])             
         res.sendStatus(200)
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -55,10 +60,10 @@ async function DeleteVariable (req, res) {
         let {
             name, 
             parentFeature, 
-            parentProject, 
+            projectName, 
         } = req.body
         let [ findParentFeature, checkIfVariableExists ] = await Promise.all([
-            findVariableParentQuery(parentFeature, req.user, parentProject),
+            findVariableParentQuery(parentFeature, req.user, projectName),
             findVariableQuery(name, req.user, parentFeature)
         ])
         if (!findParentFeature){
@@ -82,19 +87,41 @@ async function DeleteVariable (req, res) {
 }
 
 
-async function UpdateVariableStatus (req, res) {
+async function UpdateProductionStatus (req, res, next) {
     try {
-        let { 
+        let {
             name, 
             parentFeature, 
-        } = req.body 
-        let getVariable = await findVariableQuery(name, req.user, parentFeature).exec()
-        if (!getVariable){
+        } = req.body
+        let getVariable = await findVariableQuery(name, req.user, parentFeature)
+        if (!getVariable) {
             return ResourceNotFoundError(res, "Variable")
         }
-        getVariable.active = !getVariable.active
+        getVariable.productionEnabled = !getVariable.productionEnabled
         await getVariable.save()
-        res.status(200).json({ active_status : getVariable.active })
+        res.status(200).json({ productionEnabled : getVariable.productionEnabled })
+        return next()
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+    }
+}
+
+
+async function UpdateDevelopmentStatus ( req, res, next ) {
+    try {
+        let {
+            name, 
+            parentFeature, 
+        } = req.body
+        let getVariable = await findVariableQuery(name, req.user, parentFeature)
+        if (!getVariable) {
+            return ResourceNotFoundError(res, "Variable")
+        }
+        getVariable.developmentEnabled = !getVariable.developmentEnabled
+        await getVariable.save()
+        res.status(200).json({ developmentEnabled : getVariable.developmentEnabled })
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -112,7 +139,12 @@ exports.DELETE_delete_variable = [
     DeleteVariable, 
 ]
 
-exports.POST_update_variable_status = [
-    UpdateVariableStatusValidation, 
-    UpdateVariableStatus, 
+exports.POST_update_production_status = [
+    UpdateStatusValidation, 
+    UpdateProductionStatus, 
+]
+
+exports.POST_update_development_status = [
+    UpdateStatusValidation, 
+    UpdateDevelopmentStatus,
 ]

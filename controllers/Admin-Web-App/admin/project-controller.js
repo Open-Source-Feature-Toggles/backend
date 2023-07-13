@@ -4,22 +4,18 @@ const Variable = require('../../../models/api/variable')
 const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
 const { projectValidation } = require('../../../middlewares/form-validation/project-validaters')
 const { generateApiKeys } = require('../../../helpers/Api-Key-Helpers')
+const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 
 async function MakeNewProject (req, res) {
     try {
-        let { name } = req.body
-        let projectExists = await Project.findOne({ 
-            $and : [
-                { name }, 
-                { owner : req.user }, 
-            ]    
-        }).exec()
+        let { projectName } = req.body
+        let projectExists = await projectQuery(projectName, req.user)
         if (projectExists){
             return NameAlreadyExistsError(res, "Project")
         }
         let [ productionApiKey, developmentApiKey ] = await generateApiKeys()
         let newProject = new Project({
-            name,  
+            name : projectName,  
             features: [],
             owner: req.user, 
             created: new Date(), 
@@ -35,29 +31,22 @@ async function MakeNewProject (req, res) {
 }
 
 
-async function DeleteProject (req, res) {
+async function DeleteProject (req, res, next) {
     try {
-        try {
-            let { name } = req.body
-            let project = await Project.findOne({ 
-                $and : [
-                    { name }, 
-                    { owner : req.user }, 
-                ]
-            }).exec()
-            if (!project) { 
-                return ResourceNotFoundError(res, "Project")  
-            }
-            await Promise.all([
-                Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
-                Feature.deleteMany({ parentProjectID : project._id }),
-                Project.findByIdAndDelete(project._id),
-            ])
-            res.sendStatus(200)
-        } catch (error) {
-            res.sendStatus(500)
-            console.error(error)
+        let { projectName } = req.body
+        let project = await projectQuery(projectName, req.user)
+        if (!project) { 
+            return ResourceNotFoundError(res, "Project")  
         }
+        await Promise.all([
+            Variable.deleteMany({ parentFeatureID : { $in : project.features }}),
+            Feature.deleteMany({ parentProjectID : project._id }),
+            Project.findByIdAndDelete(project._id),
+        ])
+        res.sendStatus(200)
+        req.productionApiKey = project.productionApiKey
+        req.developmentApiKey = project.developmentApiKey
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
