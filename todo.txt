@@ -9,10 +9,23 @@
 
 
 
+Testing 
+-------------------------
+
+What Needs to be Tested?
+
+    1. Mongoose Queries 
+    2. Routes  
+        2a. Error Messages 
+        2b. Status Codes 
+        2c. Payloads 
+    3. Caching 
+        3a. Is the cache properly updated 
+        3b. Are there redundancies in place to ensure
+        that payloads can be delivered, even if the cache goes down 
 
 
-
-Caching 
+Caching (Complete)
 -----------------------
 
 
