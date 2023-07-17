@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 
 // Configure Environment
 if (process.env.NODE_ENV === 'development'){
-    dotenv.config({ path : join(__dirname, `../../.development.env`) })
+    dotenv.config({ path : join(__dirname, `../../.env.development`) })
 }
 
 async function ConnectDB () {

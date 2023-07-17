@@ -1,6 +1,8 @@
 const express = require('express')
 
-function App (db_connected=false) {
+function CreateApp (db_connected=false) {
+    const path = require('path')
+    const dotenv = require('dotenv').config({ path : path.join(__dirname, '.env.development') })
     const cors = require('cors')
     const morgan = require('morgan')
     const cookie_parser = require('cookie-parser')
@@ -41,4 +43,4 @@ function App (db_connected=false) {
  
 
 
-module.exports = App
+module.exports = CreateApp

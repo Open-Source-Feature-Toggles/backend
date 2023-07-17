@@ -1,6 +1,6 @@
-const App = require('./app')
-const AppInstance = App()
+const CreateApp = require('./app')
+const app = CreateApp()
 
-AppInstance.listen(3000, () => {
+app.listen(3000, () => {
     console.log('Application is listening on PORT 3000')
 })
