@@ -1,8 +1,7 @@
 const express = require('express')
 
-function App (database_connection) {
+function App (db_connected=false) {
     const cors = require('cors')
-    const ConnectMongo = require('./src/providers/mongoDB')
     const morgan = require('morgan')
     const cookie_parser = require('cookie-parser')
     const app = express()
@@ -12,9 +11,13 @@ function App (database_connection) {
     const authRoutes = require('./src/routes/Admin-Web-App/authRoutes')
     const apiRouter = require('./src/routes/api/api-router')
 
-    // Connect Mongo
-    ConnectMongo(database_connection)
-        
+    // Connect Providers
+    if (!db_connected){
+        require('./src/config/mongo.config')
+    }
+    require('./src/config/redis.config')
+    
+    
     // Express Middleware 
     app.use(cors({
         origin: 'http://localhost:5173',
