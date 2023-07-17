@@ -1,6 +1,6 @@
 const { body } = require('express-validator')
 const ValidationError = require('./validation-error')
-const { PasswordConfirmPasswordError } = require('../../helpers/common-error-messages')
+const { PasswordConfirmPasswordError } = require('../helpers/common-error-messages')
 
 const LoginValidator = [
     body("username")

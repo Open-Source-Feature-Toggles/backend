@@ -2,7 +2,7 @@ const User = require('../../../models/auth/user')
 const { hash } = require('bcrypt')
 const { generateAccessToken, generateRefreshToken } = require('../../../helpers/Token-Helpers')
 const { NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
-const { SignupValidation } = require('../../../middlewares/form-validation/login-signup-validators')
+const { SignupValidation } = require('../../../validations/login-signup-validators')
 
 async function SignUp (req, res) {
     try {

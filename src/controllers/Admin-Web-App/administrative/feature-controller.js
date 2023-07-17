@@ -5,7 +5,7 @@ const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../help
 const { 
     Name_ProjectName_Validation, 
     Make_New_Feature_Validation
-} = require('../../../middlewares/form-validation/feature-validators')
+} = require('../../../validations/feature-validators')
 const { FeatureExistsQuery } = require('../../../helpers/common-queries/feature-queries')
 const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 

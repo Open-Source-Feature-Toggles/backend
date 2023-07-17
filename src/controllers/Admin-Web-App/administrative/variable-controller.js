@@ -8,7 +8,7 @@ const {
     MakeNewVariableValidation, 
     DeleteVariableValidation, 
     UpdateStatusValidation, 
-} = require('../../../middlewares/form-validation/variable-validators')
+} = require('../../../validations/variable-validators')
 const { 
     findVariableParentQuery,  
     findVariableQuery, 

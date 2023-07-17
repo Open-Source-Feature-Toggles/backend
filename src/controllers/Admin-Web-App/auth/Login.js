@@ -4,7 +4,7 @@ const { generateAccessToken,
         generateRefreshToken 
 } = require('../../../helpers/Token-Helpers')
 const { BadPasswordError, ResourceNotFoundError  } = require('../../../helpers/common-error-messages')
-const { LoginValidation } = require('../../../middlewares/form-validation/login-signup-validators')
+const { LoginValidation } = require('../../../validations/login-signup-validators')
 
 async function Login (req, res) {
     try {

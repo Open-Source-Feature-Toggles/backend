@@ -2,7 +2,7 @@ const Project = require('../../../models/api/project')
 const Feature = require('../../../models/api/feature')
 const Variable = require('../../../models/api/variable')
 const { ResourceNotFoundError, NameAlreadyExistsError } = require('../../../helpers/common-error-messages')
-const { projectValidation } = require('../../../middlewares/form-validation/project-validaters')
+const { projectValidation } = require('../../../validations/project-validaters')
 const { generateApiKeys } = require('../../../helpers/Api-Key-Helpers')
 const { projectQuery } = require('../../../helpers/common-queries/project-queries')
 
