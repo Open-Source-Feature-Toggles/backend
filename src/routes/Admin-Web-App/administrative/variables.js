@@ -6,7 +6,7 @@ const {
     DELETE_delete_variable,  
     POST_update_production_status, 
     POST_update_development_status, 
-} = require('../../../controllers/Admin-Web-App/admin/variable-controller')
+} = require('../../../controllers/Admin-Web-App/administrative/variable-controller')
 const {
     RebuildDevCache, 
     RebuildProdCache,     

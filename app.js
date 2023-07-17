@@ -2,15 +2,15 @@ const express = require('express')
 
 function App (database_connection) {
     const cors = require('cors')
-    const ConnectMongo = require('./providers/mongoDB')
+    const ConnectMongo = require('./src/providers/mongoDB')
     const morgan = require('morgan')
     const cookie_parser = require('cookie-parser')
     const app = express()
-    const projectRoutes = require('./routes/Admin-Web-App/admin/projects')
-    const featuresRoutes = require('./routes/Admin-Web-App/admin/features') 
-    const variableRoutes = require('./routes/Admin-Web-App/admin/variables')
-    const authRoutes = require('./routes/Admin-Web-App/authRoutes')
-    const apiRouter = require('./routes/api/api-router')
+    const projectRoutes = require('./src/routes/Admin-Web-App/administrative/projects')
+    const featuresRoutes = require('./src/routes/Admin-Web-App/administrative/features') 
+    const variableRoutes = require('./src/routes/Admin-Web-App/administrative/variables')
+    const authRoutes = require('./src/routes/Admin-Web-App/authRoutes')
+    const apiRouter = require('./src/routes/api/api-router')
 
     // Connect Mongo
     ConnectMongo(database_connection)

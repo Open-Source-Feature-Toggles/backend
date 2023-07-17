@@ -5,7 +5,7 @@ const { DestroyCachedResults } = require('../../../helpers/caching/Cache-Handler
 const { 
     POST_make_new_project, 
     DELETE_delete_project 
-} = require('../../../controllers/Admin-Web-App/admin/project-controller')
+} = require('../../../controllers/Admin-Web-App/administrative/project-controller')
 
 router.post("/make-new-project", ProtectAuthRoutes, POST_make_new_project)
 

@@ -6,7 +6,7 @@ const {
     POST_change_development_status, 
     POST_delete_feature,
     POST_make_new_feature 
-} = require("../../../controllers/Admin-Web-App/admin/feature-controller")
+} = require("../../../controllers/Admin-Web-App/administrative/feature-controller")
 const {
     RebuildDevCache, 
     RebuildProdCache,   

@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
-const dotenv = require('dotenv').config()
 
 async function ConnectMongo (connection_string) {
+    if (mongoose.connection.readyState){
+        return
+    }
     try {
         let connection = await mongoose.connect(connection_string)
         console.log(`[CONNECTED] Mongo`)
