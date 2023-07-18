@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "dev": "cross-env NODE_ENV=development nodemon server.js", 
+    "test": "cross-env NODE_ENV=testing jest",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/server.js", 
     "debug": "nodemon --inspect server.js"
   },
   "keywords": [],
