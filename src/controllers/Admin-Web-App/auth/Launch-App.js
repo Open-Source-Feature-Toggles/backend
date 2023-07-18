@@ -9,9 +9,6 @@ const { generateAccessToken } = require('../../../helpers/Token-Helpers')
 
 async function LaunchApplication (req, res) {
     try {  
-        if (!req.accessToken){
-            throw new Error("No accessToken found")
-        } 
         return res.status(200).json({ accessToken : generateAccessToken(req.user) })
     } catch (error) {
         console.error(error)
