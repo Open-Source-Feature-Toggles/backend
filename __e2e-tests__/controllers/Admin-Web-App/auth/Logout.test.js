@@ -4,6 +4,7 @@ const {
     TakeDownTestEnv, 
     createFakeAccount, 
 } = require('../../../test-helpers')
+const { clearDatabase } = require('../../../../src/config/in-memory-mongo.config')
 const User = require('../../../../src/models/auth/user')
 let app
 let fakeAccount, cookie, refreshToken   
@@ -12,6 +13,10 @@ const PASSWORD = 'password'
 
 beforeAll( async () => {
     app = await SetupTestEnv()
+})
+
+beforeEach(async () => {
+    await clearDatabase()
     fakeAccount = await createFakeAccount(app, USERNAME, PASSWORD)
     cookie = fakeAccount.headers['set-cookie'][0].split(';')[0].split('=')
     refreshToken = cookie[1]
@@ -53,9 +58,4 @@ describe('Unsuccessfully logs a user out of their acount', () => {
             .send({ username : USERNAME })
         expect(unSuccessfulLogout.status).toBe(401)
     })
-
-    it('Breaks the server', async () => {
-        
-    })
-
 })
