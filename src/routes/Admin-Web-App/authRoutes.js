@@ -3,7 +3,6 @@ const router = express.Router()
 
 // Middleware 
 const { 
-    ProtectAuthRoutes, 
     verifyRefreshToken 
 } = require('../../middlewares/auth')
 
@@ -18,7 +17,7 @@ router.post("/login", Login)
 
 router.post("/sign-up", SignUp)
 
-router.post("/launch-app", ProtectAuthRoutes, LaunchAppController)
+router.post("/launch-app", verifyRefreshToken, LaunchAppController)
 
 router.delete("/logout", verifyRefreshToken, LogoutUser)
 
