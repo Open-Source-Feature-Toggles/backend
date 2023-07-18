@@ -11,6 +11,7 @@ async function connect () {
 
 async function disconnect () {
     if (mongod){
+        await clearDatabase()
         await mongoose.connection.dropDatabase()
         await mongoose.connection.close()
         await mongod.stop()
