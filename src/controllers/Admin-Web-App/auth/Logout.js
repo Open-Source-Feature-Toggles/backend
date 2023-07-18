@@ -1,6 +1,8 @@
 const { verifyRefreshToken } = require('../../../middlewares/auth')
+const { ResourceNotFoundError } = require('../../../helpers/common-error-messages')
 
 async function LogoutUser (req, res) {
+    debugger
     try {
         if (!req.userObject){
             throw new Error("Missing userObject")
@@ -15,7 +17,4 @@ async function LogoutUser (req, res) {
 }
 
 
-exports.LogoutUser = [
-    verifyRefreshToken, 
-    LogoutUser
-]
+module.exports = LogoutUser
