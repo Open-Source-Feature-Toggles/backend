@@ -3,6 +3,7 @@ const {
     SetupTestEnv, 
     TakeDownTestEnv, 
     createFakeAccount, 
+    ParseCookie
 } = require('../../../test-helpers')
 let app, fakeAccount
 const GOOD_USERNAME = 'fakeuser' 
@@ -40,7 +41,7 @@ describe('Successfuly logs you in', () => {
     })
 
     it('Successfully returns a JSONWEBTOKEN cookie', () => {
-        let cookie_name = loginAttempt.headers['set-cookie'][0].split(';')[0].split('=')[0]
+        let { cookie_name } = ParseCookie(loginAttempt)
         expect(cookie_name).toEqual('rjid')
     })
 })

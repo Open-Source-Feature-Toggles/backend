@@ -29,10 +29,19 @@ async function TakeDownTestEnv () {
     await disconnect()
 }
 
+function ParseCookie (response_object) {
+    let cookie = response_object.headers['set-cookie'][0].split(';')[0].split('=')
+    let cookie_name = cookie[0]
+    let jwt = cookie[1]
+    cookie = `${cookie_name}=${jwt}`
+    return { cookie, cookie_name, jwt } 
+}
+
 
 module.exports = { 
     createFakeAccount, 
     SetupTestEnv, 
     TakeDownTestEnv, 
-    LoginFakeAccount
+    LoginFakeAccount, 
+    ParseCookie
 } 

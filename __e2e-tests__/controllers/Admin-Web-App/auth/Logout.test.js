@@ -3,11 +3,12 @@ const {
     SetupTestEnv, 
     TakeDownTestEnv, 
     createFakeAccount, 
+    ParseCookie, 
 } = require('../../../test-helpers')
 const { clearDatabase } = require('../../../../src/config/in-memory-mongo.config')
 const User = require('../../../../src/models/auth/user')
 let app
-let fakeAccount, cookie, refreshToken   
+let fakeAccount   
 const USERNAME = 'fakeuser'
 const PASSWORD = 'password'
 
@@ -18,9 +19,6 @@ beforeAll( async () => {
 beforeEach(async () => {
     await clearDatabase()
     fakeAccount = await createFakeAccount(app, USERNAME, PASSWORD)
-    cookie = fakeAccount.headers['set-cookie'][0].split(';')[0].split('=')
-    refreshToken = cookie[1]
-    cookie = `${cookie[0]}=${cookie[1]}`
 })
 
 afterAll( async () => {
@@ -34,6 +32,7 @@ async function GetUserByRefreshToken (refreshToken) {
 }
 
 async function SuccessfulLogout () {
+    let { cookie } = ParseCookie(fakeAccount)
     return await request(app)
         .delete('/auth/logout')
         .set('Cookie', cookie)
@@ -43,9 +42,10 @@ async function SuccessfulLogout () {
 
 describe('Successfully logs a user out of their account', () => {
     it('Successfully deletes refresh token from user\'s db entry', async () => {
-        let UserHasToken = await GetUserByRefreshToken(refreshToken)
+        let { jwt } = ParseCookie(fakeAccount)
+        let UserHasToken = await GetUserByRefreshToken(jwt)
         await SuccessfulLogout()
-        let UserDoesNotHaveToken = await GetUserByRefreshToken(refreshToken)
+        let UserDoesNotHaveToken = await GetUserByRefreshToken(jwt)
         expect(UserHasToken).toHaveProperty('refreshToken')
         expect(UserDoesNotHaveToken).toBe(null)
     })  
