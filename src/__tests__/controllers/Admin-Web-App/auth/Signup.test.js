@@ -5,7 +5,10 @@ const {
     LoginFakeAccount, 
     ParseCookie, 
 } = require('../../../test-helpers')
-let app
+const { 
+    makeUser
+} = require('../../../testDataGenerators')
+let app, fakeUser
 const USERNAME = 'fakeuser' 
 const PASSWORD = 'fakepassword'
 const CONFIRM_PASSWORD = PASSWORD
@@ -13,7 +16,7 @@ let signUpAttempt
 
 beforeAll( async () => {
     app = await SetupTestEnv()
-    signUpAttempt = await SuccessfulSignup()
+    fakeUser = await makeUser(app, USERNAME, PASSWORD)
 })
 
 afterAll( async () => {
@@ -33,20 +36,21 @@ async function SuccessfulSignup () {
 describe('Successfully signs you up for an account', () => {
 
     it('Successfully signs you up and performs a login with the same credentials', async () => {
-        let loginAttempt = await LoginFakeAccount(app, USERNAME, PASSWORD)
+        await fakeUser.LoginFakeAccount(app, USERNAME, PASSWORD)
+        let loginAttempt = fakeUser.responses.LoginFakeAccountResponse
         expect(loginAttempt.status).toBe(200)
     })
 
     it('Successfully signs you up for an account and /auth/sign-up returns a 200 status', async () => {
-        expect(signUpAttempt.status).toBe(200)
+        expect(fakeUser.responses.createFakeAccountResponse.status).toBe(200)
     })
 
     it('Successfully returns the user an accessToken after signing you up', async () => {
-        expect(signUpAttempt.body).toHaveProperty('accessToken')
+        expect(fakeUser.responses.createFakeAccountResponse.body).toHaveProperty('accessToken')
     })
 
     it('Successfully returns the user a JSONWEBTOKEN cookie', async () => {
-        let { cookie_name } = ParseCookie(signUpAttempt)
+        let { cookie_name } = fakeUser.cookie
         expect(cookie_name).toEqual('rjid')
     })
 })

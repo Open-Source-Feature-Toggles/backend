@@ -5,6 +5,7 @@ const {
     createFakeAccount,
     ParseCookie, 
 } = require('./../../../test-helpers')
+const { makeUser } = require('../../../testDataGenerators')
 let app, fakeUser
 const USERNAME = 'fakeuser' 
 const PASSWORD = 'fakepassword'
@@ -12,7 +13,7 @@ const CONFIRM_PASSWORD = PASSWORD
 
 beforeAll( async () => {
     app = await SetupTestEnv()
-    fakeUser = await createFakeAccount(app, USERNAME, PASSWORD, CONFIRM_PASSWORD)
+    fakeUser = await makeUser(app, USERNAME, PASSWORD)
 })
 
 afterAll( async () => {
@@ -23,10 +24,10 @@ afterAll( async () => {
 describe('Successfully calls Launch App Route', () => {
     let callLaunchApp
     async function SuccessfulLaunchCall () {
-        let { cookie } = ParseCookie(fakeUser)
+        let { full_cookie } = fakeUser.cookie
         return await request(app)
             .post('/auth/launch-app')
-            .set('cookie', cookie)
+            .set('cookie', full_cookie)
             .send()
     }
     beforeAll( async () => {

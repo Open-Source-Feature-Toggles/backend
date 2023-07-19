@@ -2,9 +2,9 @@ const request = require('supertest')
 const { 
     SetupTestEnv, 
     TakeDownTestEnv, 
-    createFakeAccount, 
     ParseCookie
 } = require('../../../test-helpers')
+const { makeUser } = require('../../../testDataGenerators')
 let app, fakeAccount
 const GOOD_USERNAME = 'fakeuser' 
 const GOOD_PASSWORD = 'fakepassword'
@@ -13,7 +13,7 @@ const BAD_PASSWORD = 'badpassword'
 
 beforeAll( async () => {
     app = await SetupTestEnv()
-    fakeAccount = await createFakeAccount(app, GOOD_USERNAME, GOOD_PASSWORD)
+    fakeAccount = await makeUser(app, GOOD_USERNAME, GOOD_PASSWORD)
 })
 
 afterAll( async () => {
@@ -64,19 +64,3 @@ describe('Unsuccessfully logs you in', () => {
         expect(loginAttempt.status).toBe(401)
     })
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
