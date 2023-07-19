@@ -11,7 +11,7 @@ class FakeUser {
     }
 
     async createFakeAccount () {
-        if (this.LoginFakeAccountResponse){ return }
+        if (this.responses.LoginFakeAccountResponse){ return }
         const response = await request(this.app)
             .post('/auth/sign-up')
             .send({ 
