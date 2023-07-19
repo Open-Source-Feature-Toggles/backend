@@ -1,9 +1,9 @@
 const request = require('supertest')
-const CreateApp = require('../src/app')
+const CreateApp = require('../app')
 const { 
     connect, 
     disconnect, 
-} = require('../src/config/in-memory-mongo.config') 
+} = require('../config/in-memory-mongo.config') 
 
 async function createFakeAccount (app, username, password) {
     const response = await request(app)

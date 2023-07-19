@@ -4,7 +4,7 @@ const {
     TakeDownTestEnv, 
     createFakeAccount,
     ParseCookie, 
-} = require('../../../test-helpers')
+} = require('./../../../test-helpers')
 let app, fakeUser
 const USERNAME = 'fakeuser' 
 const PASSWORD = 'fakepassword'

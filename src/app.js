@@ -5,12 +5,12 @@ function CreateApp () {
     const cors = require('cors')
     const morgan = require('morgan')
     const cookie_parser = require('cookie-parser')
-    const app = express()
     const projectRoutes = require('./routes/Admin-Web-App/administrative/projects')
     const featuresRoutes = require('./routes/Admin-Web-App/administrative/features') 
     const variableRoutes = require('./routes/Admin-Web-App/administrative/variables')
     const authRoutes = require('./routes/Admin-Web-App/authRoutes')
     const apiRouter = require('./routes/api/api-router')
+    const app = express()
     
     
     // Express Middleware 

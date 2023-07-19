@@ -5,8 +5,8 @@ const {
     createFakeAccount, 
     ParseCookie, 
 } = require('../../../test-helpers')
-const { clearDatabase } = require('../../../../src/config/in-memory-mongo.config')
-const User = require('../../../../src/models/auth/user')
+const { clearDatabase } = require('../../../../config/in-memory-mongo.config')
+const User = require('../../../../models/auth/user')
 let app
 let fakeAccount   
 const USERNAME = 'fakeuser'
