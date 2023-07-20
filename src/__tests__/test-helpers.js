@@ -3,6 +3,7 @@ const CreateApp = require('../app')
 const { 
     connect, 
     disconnect, 
+    clearDatabase
 } = require('../config/in-memory-mongo.config') 
 
 async function createFakeAccount (app, username, password) {
@@ -29,6 +30,10 @@ async function TakeDownTestEnv () {
     await disconnect()
 }
 
+async function ClearDataBase() {
+    await clearDatabase()
+}
+
 function ParseCookie (response_object) {
     let cookie = response_object.headers['set-cookie'][0].split(';')[0].split('=')
     let cookie_name = cookie[0]
@@ -43,5 +48,6 @@ module.exports = {
     SetupTestEnv, 
     TakeDownTestEnv, 
     LoginFakeAccount, 
-    ParseCookie
+    ParseCookie, 
+    clearDatabase, 
 } 

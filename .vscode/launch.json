@@ -10,7 +10,7 @@
           "${workspaceRoot}/node_modules/jest/bin/jest.js",
           "--runInBand", 
         ],
-        "args" : ["--runInBand", "./src/__tests__/controllers/Admin-Web-App/administrative-functions/del.test.js"], 
+        "args" : ["--runInBand", "./src/__tests__/controllers/Admin-Web-App/administrative-functions/feature-controller.test.js"], 
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen", 
         "env" : {
