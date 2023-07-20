@@ -103,7 +103,6 @@ class FakeFeature {
                 projectName : this.projectName, 
                 featureVariableName : this.featureVariableName, 
             })
-        console.log(this.user.getFullCookie())
         this.responses.CreateFakeFeature = response
     }
 
@@ -215,6 +214,58 @@ async function makeUser(app, username, password) {
     return fakeUser 
 }
 
+/**
+ * @param {Object} args - The options object
+ * @param {Object} args.app - The app instance
+ * @param {string} args.fakeUser - The instantiated fakeUser object
+ * @param {string} args.fakeProject - The instantiated fakeProject object
+ * @param {string} args.projectName - The name of the parentProject
+ * @param {string} args.featureName - The name of the feature you want created
+ * @param {string} args.description - The description of the feature you want created
+ * @param {string} args.initialVariableKey - The name of the initial-variable-key you want created
+ * @param {string} args.featureVariableName - The name of the feature variable
+ */
+
+async function makeFeature(args) {
+    const { 
+        app,
+        fakeUser, 
+        fakeProject,   
+        projectName, 
+        featureName, 
+        description, 
+        initialVariableKey, 
+        featureVariableName 
+    } = args 
+    let fakeFeature = new FakeFeature(app, featureName, description, initialVariableKey, projectName, featureVariableName, fakeUser, fakeProject)
+    await fakeFeature.CreateFakeFeature()
+    return fakeFeature
+}
+
+/**
+ * @param {Object} args - The options object
+ * @param {Object} args.app - The app instance
+ * @param {string} args.fakeUser - The instantiated fakeUser object
+ * @param {string} args.fakeProject - The instantiated fakeProject object
+ * @param {string} args.fakeFeature - The instantiated fakeFeature object
+ * @param {string} args.projectName - The name of the parentProject
+ * @param {string} args.newVariableName - The name of the variable you want created
+ */
+
+async function makeVariable(args) {
+    const {
+        app, 
+        fakeUser, 
+        fakeProject, 
+        fakeFeature, 
+        projectName, 
+        newVariableName,
+    } = args
+    let fakeVariable = new FakeVariable(app, fakeUser, fakeProject, fakeFeature, newVariableName, false, projectName )
+    await fakeVariable.CreateFakeVariable()
+    return fakeVariable
+}
+
 async function makeUsernandProject (app, username, password, projectName) {
     let fakeUser = await makeUser(app, username, password)
     let fakeProject = new FakeProject(app, fakeUser, projectName)
@@ -292,6 +343,8 @@ module.exports = {
     FakeFeature, 
     FakeVariable,
     makeUser, 
+    makeVariable, 
+    makeFeature, 
     makeUsernandProject, 
     makeUserProjectAndFeature, 
     makeUserProjectFeatureandVariable 
