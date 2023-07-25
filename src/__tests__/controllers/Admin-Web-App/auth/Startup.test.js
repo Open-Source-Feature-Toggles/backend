@@ -21,7 +21,7 @@ afterAll( async () => {
 })
 
 
-describe('Successfully calls Launch App Route', () => {
+describe('Launch-App - Success Cases', () => {
     let callLaunchApp
     async function SuccessfulLaunchCall () {
         let { full_cookie } = fakeUser.cookie
@@ -43,7 +43,7 @@ describe('Successfully calls Launch App Route', () => {
     })
 })
 
-describe('Unsuccessfully calls Launch App Route', () => {
+describe('Launch-App - Error Cases', () => {
     it('Receives a 401 status when it doesn\'t provide a refreshToken', async () => {
         let callLaunchApp = await request(app)
             .post('/auth/launch-app')

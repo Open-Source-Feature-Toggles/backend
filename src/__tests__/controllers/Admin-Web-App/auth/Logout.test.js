@@ -40,7 +40,7 @@ async function SuccessfulLogout () {
 }
 
 
-describe('Successfully logs a user out of their account', () => {
+describe('Logout - Success cases', () => {
     it('Successfully deletes refresh token from user\'s db entry', async () => {
         let { jwt } = fakeAccount.cookie
         let UserHasToken = await GetUserByRefreshToken(jwt)
@@ -51,7 +51,7 @@ describe('Successfully logs a user out of their account', () => {
     })  
 })
 
-describe('Unsuccessfully logs a user out of their acount', () => {
+describe('Logout - Error cases', () => {
     it('Successfully returns 401 when no refreshToken is provided', async () => {
         let unSuccessfulLogout = await request(app)
             .delete('/auth/logout')

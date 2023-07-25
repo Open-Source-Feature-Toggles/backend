@@ -33,22 +33,19 @@ async function SuccessfulSignup () {
         })
 }
 
-describe('Successfully signs you up for an account', () => {
+describe('Signup - Success cases', () => {
 
     it('Successfully signs you up and performs a login with the same credentials', async () => {
         await fakeUser.LoginFakeAccount(app, USERNAME, PASSWORD)
         let loginAttempt = fakeUser.responses.LoginFakeAccountResponse
         expect(loginAttempt.status).toBe(200)
     })
-
     it('Successfully signs you up for an account and /auth/sign-up returns a 200 status', async () => {
         expect(fakeUser.responses.createFakeAccountResponse.status).toBe(200)
     })
-
     it('Successfully returns the user an accessToken after signing you up', async () => {
         expect(fakeUser.responses.createFakeAccountResponse.body).toHaveProperty('accessToken')
     })
-
     it('Successfully returns the user a JSONWEBTOKEN cookie', async () => {
         let { cookie_name } = fakeUser.cookie
         expect(cookie_name).toEqual('rjid')
@@ -56,7 +53,7 @@ describe('Successfully signs you up for an account', () => {
 })
 
 
-describe('Unsuccessfully signs you up for an account', () => {
+describe('Signup - Error cases', () => {
 
     async function unsuccessfulSignup(username, password, confirm_password){
         return await request(app)
@@ -72,7 +69,6 @@ describe('Unsuccessfully signs you up for an account', () => {
         let badAttempt = await unsuccessfulSignup(USERNAME, PASSWORD, CONFIRM_PASSWORD)
         expect(badAttempt.status).toBe(409)
     })
-
     it('Attemps to signup when password !== confirm_password', async () => {
         let badAttempt = await unsuccessfulSignup(USERNAME, PASSWORD, 'incorrect-value')
         expect(badAttempt.status).toBe(409)

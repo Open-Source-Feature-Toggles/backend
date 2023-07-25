@@ -21,7 +21,7 @@ afterAll( async () => {
 })
 
 
-describe('Successfuly logs you in', () => {
+describe('Login - Success cases', () => {
     async function SuccessfulLogin () {
         return await request(app)
         .post('/auth/login')
@@ -47,7 +47,7 @@ describe('Successfuly logs you in', () => {
 })
 
 
-describe('Unsuccessfully logs you in', () => {
+describe('Logn - Error cases', () => {
     async function UnsuccessfulLogin (username, password) {
         return await request(app)
             .post('/auth/login')
