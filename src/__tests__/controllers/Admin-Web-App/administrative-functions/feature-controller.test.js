@@ -52,7 +52,7 @@ afterEach( async () => {
 
 describe('Tests ChangeProductionStatus function in Feature Controller', () => {
 
-    describe('Successfully calls ChangeProductionStatus', () => {
+    describe('ChangeProductionStatus - Success Cases', () => {
 
         it('Successfully calls /features/change-production-status and returns a 200', async () => {
             await feature.ChangeProductionStatus()
@@ -69,7 +69,7 @@ describe('Tests ChangeProductionStatus function in Feature Controller', () => {
         })    
     })
     
-    describe('Unsuccessfully calls ChangeProductionStatus', () => {
+    describe('ChangeProductionStatus - Error Cases', () => {
 
         it('It calls ChangeProductionStatus with an incorrect feature name and returns a 404', async () => {
             let response = await request(app)
@@ -97,7 +97,7 @@ describe('Tests ChangeProductionStatus function in Feature Controller', () => {
 
 describe('Tests ChangeDevelopmentStatus function in Feature Controller', () => {
 
-    describe('Successfully calls ChangeDevelopmentStatus', () => {
+    describe('ChangeDevelopmentStatus - Success Cases', () => {
 
         it('Successfully calls /features/change-development-status and returns a 200', async () => {
             await feature.ChangeDevelopmentStatus()
@@ -113,7 +113,7 @@ describe('Tests ChangeDevelopmentStatus function in Feature Controller', () => {
         })
     })
 
-    describe('Unsuccessfully calls ChangeDevelopmentStatus', () => {
+    describe('ChangeDevelopmentStatus - Error Cases', () => {
 
         it('It calls ChangeDevelopmentStatus with an incorrect feature name and returns a 404', async () => {
             let response = await request(app)
@@ -140,7 +140,7 @@ describe('Tests ChangeDevelopmentStatus function in Feature Controller', () => {
 
 describe('Tests DeleteFeature function in Feature Controller', () => {
 
-    describe('Successfully calls DeleteFeature', () => {
+    describe('DeleteFeature - Success Cases', () => {
 
         it('Successfully calls features/delete-feature and returns a 200', async () => {
             await feature.DeleteFeature()
@@ -182,7 +182,7 @@ describe('Tests DeleteFeature function in Feature Controller', () => {
 
     })
 
-    describe('Unsuccessfully calls DeleteFeature', () => {
+    describe('DeleteFeature - Error Cases', () => {
 
         it('Attempts to call DeleteFeature on a nonexistent feature and returns a 404', async () => {
             let response = await request(app)
@@ -215,7 +215,7 @@ describe('Tests MakeNewFeature function in Feature Controller', () => {
         await clearDatabase()
     })
 
-    describe('Successfully creates a new feature', () => {
+    describe('MakeNewFeature - Success Cases', () => {
 
         it('Calls /features/make-new-feature and returns a status of 200', async () => {
             let { fakeFeature }  = await makeUserProjectAndFeature(goodOptions)
@@ -244,7 +244,7 @@ describe('Tests MakeNewFeature function in Feature Controller', () => {
         })
     })
 
-    describe('Unsuccessfully creates a new feature', () => {
+    describe('MakeNewFeature - Error Cases', () => {
 
         it('Tries to create a feature with the same name as an existing feature on the same project', async () => {
             let { fakeFeature, fakeUser } = await makeUserProjectAndFeature(goodOptions)
