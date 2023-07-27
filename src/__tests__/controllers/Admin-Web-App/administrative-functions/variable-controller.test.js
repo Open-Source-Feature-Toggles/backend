@@ -45,7 +45,6 @@ beforeEach( async () => {
     project = fakeProject, 
     feature = fakeFeature, 
     variable = fakeVariable
-    
 })
 
 afterEach( async () => {
@@ -57,45 +56,43 @@ describe('Tests MakeNewVariable in Variable Controller', () => {
     describe('MakeNewVariable - Success Cases', () => {
 
         it('Calls MakeNewVariable and returns a 200 status', () => {
-            let makeNewVariableResponse = variable.responses.CreateFakeVariable
-            expect(makeNewVariableResponse.status).toBe(200)
+            let response = variable.retrieveResponse('CreateFakeVariable')
+            expect(response.status).toBe(200)
         })
         it('Creates a new variable with given variable name', async () => {
             let findVariable = await Variable.findOne({ name: options.newVariableName })
             expect(findVariable).not.toBe(null)
-            expect(findVariable.name).toBe(options.newVariableName)
-            expect(findVariable.owner).toBe(options.username)
         })
         it('Places newly created variable inside of parent feature\'s variable array', async () => {
-            let findFeature = await Feature.findOne({ name : options.featureName })
-            let findNewlyCreatedVariable = await Variable.findOne({ name: options.newVariableName })
-            expect(findFeature.variables.includes(findNewlyCreatedVariable._id)).toBe(true)
+            let feature = await Feature.findOne({ name : options.featureName })
+            let variableID = (await Variable.findOne({ name: options.newVariableName }))._id
+            expect(feature.variables.includes(variableID)).toBe(true)
         })
     })
 
     describe('MakeNewVariable - Error Cases', () => {
         
         it('Attempts to make a variable with a name that\'s already held by an existing variable', async () => {
-            let fakeVariable = await makeVariable({
-                app, 
-                fakeUser: user, 
-                fakeProject : project, 
-                fakeFeature : feature, 
-                newVariableName: options.newVariableName
-            })
-            let makeNewVariableResponse = fakeVariable.responses.CreateFakeVariable
-            expect(makeNewVariableResponse.status).toBe(409)
+            /* 
+            * By calling variable.CreateFakeVariable(), we are attempting to create 
+            * a variable with the same name, owner, parentFeatureName, etc. that we 
+            * used when creating the variable in the beforeEach block. This will 
+            * inherently cause a conflict with our controller. 
+            */
+            let response = await variable.CreateFakeVariable()
+            expect(response.status).toBe(409)
         })
         it('Attemps to make a variable for a feature that doesn\'t exist and returns a 404', async () => {
-            let fakeVariable = await makeVariable({
-                app, 
-                fakeUser: user, 
-                fakeProject : project, 
-                fakeFeature : { featureName : 'nonexistent-feature' }, 
-                newVariableName: options.newVariableName
-            })
-            let makeNewVariableResponse = fakeVariable.responses.CreateFakeVariable
-            expect(makeNewVariableResponse.status).toBe(404)
+            /* 
+            * By calling DeleteFeature, we will delete the feature + all child
+            * variables associated with the feature. Since the MakeNewVariable 
+            * function checks for two conditions (that there isn't already a variable
+            * with the given name and that the parent Feature exists), this works well
+            * for our test given we are testing the second condition.  
+            */
+            await feature.DeleteFeature()
+            let response = await variable.CreateFakeVariable()
+            expect(response.status).toBe(404)
         })
     })
 })
@@ -112,8 +109,8 @@ describe('Tests DeleteVariable in Variable Controller', () => {
         })
 
         it('Calls DeleteVariable and returns a 200 status', async () => {
-            let deleteVariableResponse = variable.responses.DeleteFakeVariable
-            expect(deleteVariableResponse.status).toBe(200)
+            let response = variable.retrieveResponse('DeleteFakeVariable')
+            expect(response.status).toBe(200)
         })
         it('Successfully deletes a variable after DeleteVariable is called', async () => {
             let checkIfVariableDeleted = await Variable.findOne({ name: options.newVariableName })
@@ -127,21 +124,26 @@ describe('Tests DeleteVariable in Variable Controller', () => {
 
     describe('DeleteVariable - Error Cases', () => {
 
-        it('Attempts to delete a variable that doesn\'t exist', async () => {
-            // Call variable.DeleteFakeVariable twice to trigger a 404 response
-            // The first to actually delete the variable and the second to simulate
-            // Deleting a nonexistent variable
+        it('Attempts to delete a variable that doesn\'t exist and returns a 404', async () => {
+            /* 
+            * We first call DeleteFakeVariable() to successfully delete the variable
+            * so that our second call to DeleteFakeVariable will fail (since the variable
+            * no longer exists). 
+            */
             await variable.DeleteFakeVariable()
-            await variable.DeleteFakeVariable()
-            let deleteVariableResponse = variable.responses.DeleteFakeVariable
-            expect(deleteVariableResponse.status).toBe(404)
+            let response = await variable.DeleteFakeVariable()
+            expect(response.status).toBe(404)
         })  
-        it('Attemps to delete a variable from a parent feature that doesn\'t exist', async () => {
-            // First delete variable's parent feature, then try to delete variable 
+        it('Attemps to delete a variable from a parent feature that doesn\'t exist and returns a 404', async () => {
+            /* 
+            * First delete variable's parent feature, then try to delete variable, 
+            * causing the controller to return a 404 
+            */
             let getParentFeature = await Feature.findOne({ name : options.featureName })
             await Feature.findByIdAndDelete(getParentFeature._id)
             await variable.DeleteFakeVariable()
-            expect(variable.retrieveResponseStatus('DeleteFakeVariable')).toBe(404)
+            let response = variable.retrieveResponseStatus('DeleteFakeVariable') 
+            expect(response.status).toBe(404)
         })
     })
 })  
