@@ -49,6 +49,10 @@ class FakeUser {
         full_cookie = `${cookie_name}=${jwt}`
         this.cookie = { full_cookie, cookie_name, jwt } 
     }
+
+    retrieveResponse ( function_title ) {
+        return this.responses[function_title]
+    }
 }
 
 class FakeProject {
@@ -79,6 +83,10 @@ class FakeProject {
             })
         this.responses.DeleteFakeProject = response
         return response
+    }
+
+    retrieveResponse ( function_title ) {
+        return this.responses[function_title]
     }
 }
 
@@ -145,6 +153,10 @@ class FakeFeature {
             })
         this.responses.DeleteFeature = response
         return response            
+    }
+
+    retrieveResponse ( function_title ) {
+        return this.responses[function_title]
     }
 }
 
@@ -213,11 +225,8 @@ class FakeVariable {
         return response
     }
 
-    retrieveResponseStatus ( function_title ) {
-        if (this.responses[function_title]){
-            return this.responses[function_title]['status']
-        }
-        return null 
+    retrieveResponse ( function_title ) {
+        return this.responses[function_title]
     }
 }
 
@@ -280,15 +289,15 @@ async function makeVariable(args) {
         newVariableName,
     } = args
     let fakeVariable = new FakeVariable(app, fakeUser, fakeProject, fakeFeature, newVariableName, false, fakeProject.projectName )
-    await fakeVariable.CreateFakeVariable()
-    return fakeVariable
+    let createFakeVariableResponse = await fakeVariable.CreateFakeVariable()
+    return { fakeVariable, createFakeVariableResponse } 
 }
 
 async function makeUsernandProject (app, username, password, projectName) {
     let fakeUser = await makeUser(app, username, password)
     let fakeProject = new FakeProject(app, fakeUser, projectName)
-    await fakeProject.CreateFakeProject()
-    return { fakeUser, fakeProject }
+    let createFakeProjectResponse = await fakeProject.CreateFakeProject()
+    return { fakeUser, fakeProject, createFakeProjectResponse }
 }
 
 /**
@@ -317,8 +326,8 @@ async function makeUserProjectAndFeature(args) {
     let { fakeUser, fakeProject } = await makeUsernandProject(app,
         username, password, projectName)
     let fakeFeature = new FakeFeature(app, featureName, description, initialVariableKey, projectName, featureVariableName, fakeUser, fakeProject)
-    await fakeFeature.CreateFakeFeature()
-    return { fakeUser, fakeProject, fakeFeature }
+    let createFakeFeatureResponse = await fakeFeature.CreateFakeFeature()
+    return { fakeUser, fakeProject, fakeFeature, createFakeFeatureResponse }
 }
 
 /**
@@ -351,8 +360,8 @@ async function makeUserProjectFeatureandVariable (args) {
         initialVariableKey, featureVariableName
     })
     let fakeVariable = new FakeVariable(app, fakeUser, fakeProject, fakeFeature, newVariableName, false, projectName )
-    await fakeVariable.CreateFakeVariable()
-    return { fakeUser, fakeProject, fakeFeature, fakeVariable }
+    let createFakeVariableResponse = await fakeVariable.CreateFakeVariable()
+    return { fakeUser, fakeProject, fakeFeature, fakeVariable, createFakeVariableResponse }
 }
 
 module.exports = {
