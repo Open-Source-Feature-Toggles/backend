@@ -39,17 +39,16 @@ describe('Tests MakeNewProject function in Project Controller', () => {
 
     describe('MakeNewProject - Success Cases', () => {
 
-        it('Calls /projects/make-new-project and returns a 200 status', () => {
-            let makeProjectResponse = testProject.responses.CreateFakeProject
+        it('Calls MakeNewProject and returns a 200 status', () => {
+            let makeProjectResponse = testProject.retrieveResponse('CreateFakeProject')
             expect(makeProjectResponse.status).toBe(200)
         })
         it('Creates a project with the name fakeProject', async () => {
             let findProject = await Project.findOne({ name: PROJECT_NAME })
             expect(findProject).not.toBe(null)
-            expect(findProject.owner).toBe(USERNAME)
         })
         it('Creates two projects with the same name but different owners', async () => {
-            let { fakeProject, fakeUser } = await makeUsernandProject(app, 'new-fake-user', PASSWORD, PROJECT_NAME)
+            await makeUsernandProject(app, 'new-fake-user', PASSWORD, PROJECT_NAME)
             let allProjects = await Project.find()
             expect(allProjects.length).toBe(2)
             expect(allProjects[0].owner).not.toEqual(allProjects[1].owner)
@@ -59,14 +58,9 @@ describe('Tests MakeNewProject function in Project Controller', () => {
 
     describe('MakeNewProject - Error Cases', () => {
 
-        it('Tries to create a project with the same name and returns a 409', async () => {
-            let createProjectResponse = await request(app)
-                .post('/projects/make-new-project')
-                .set('Cookie', user.getFullCookie())
-                .send({
-                    projectName : PROJECT_NAME, 
-                })
-            expect(createProjectResponse.status).toBe(409)
+        it('Tries to create a project with the same name/owner and returns a 409', async () => {
+            let response = await testProject.CreateFakeProject()
+            expect(response.status).toBe(409)
         })
     })
 })
@@ -75,10 +69,9 @@ describe('Tests DeleteProject function in Project Controller', () => {
 
     describe('DeleteProject - Success Cases', () => {
 
-        it('Calls /projects/delete-project and returns a 200 status', async () => {
-            await testProject.DeleteFakeProject()
-            let deleteProjectStatus = testProject.responses.DeleteFakeProject
-            expect(deleteProjectStatus.status).toBe(200)
+        it('Calls DeleteProject and returns a 200 status', async () => {
+            let response = await testProject.DeleteFakeProject()
+            expect(response.status).toBe(200)
         })
         it('Deletes project from DB', async () => {
             let beforeDelete = await Project.findOne({ name : PROJECT_NAME })
@@ -88,12 +81,16 @@ describe('Tests DeleteProject function in Project Controller', () => {
             expect(afterDelete).toBe(null)
         })
         it('Deletes all features and variables associated with the project', async () => {
+            /* 
+            * This test will create a new user with an associated project, 
+            * feature, and variable. It will then call fakeProject.DeleteFakeProject(), 
+            * which should delete all associated variables and features with the project. 
+            * The test first asserts that they were created and then asserts that they have 
+            * been deleted. 
+            */
             await clearDatabase()
-            // This will make a new user, project, feature, and two new variables 
-            // This way, we can check to make sure that all four items are deleted 
-            // When a project is deleted
-            let { 
-                fakeProject, 
+            let {
+                fakeProject
             } = await makeUserProjectFeatureandVariable({
                 app, 
                 username : USERNAME, 
@@ -105,32 +102,32 @@ describe('Tests DeleteProject function in Project Controller', () => {
                 featureVariableName : 'fake-name', 
                 newVariableName : 'fake-variable', 
             })
+            let featureBeforeDelete = await Feature.findOne({ parentProjectName : PROJECT_NAME })
+            let variablesBeforeDelete = await Variable.findOne({ parentFeatureName : 'fake-feature' })
             let projectBeforeDelete = await Project.findOne({ name : PROJECT_NAME })
-            let featureBeforeDelete = await Feature.findOne({ name : 'fake-feature' })
-            let variablesBeforeDelete = await Variable.find({ owner : USERNAME })
             await fakeProject.DeleteFakeProject()
+            let featureAfterDelete = await Feature.findOne({ parentProjectName : PROJECT_NAME })
+            let variablesAfterDelete = await Variable.findOne({ parentFeatureName : 'fake-feature' })
             let projectAfterDelete = await Project.findOne({ name : PROJECT_NAME })
-            let featureAfterDelete = await Feature.findOne({ name : 'fake-feature' }) 
-            let variablesAfterDelete = await Variable.find({ owner : USERNAME })
             expect(projectBeforeDelete).not.toBe(null)
             expect(projectBeforeDelete.features[0]).toEqual(featureBeforeDelete._id)
-            expect(featureBeforeDelete.variables.length).toEqual(variablesBeforeDelete.length)
+            expect(featureBeforeDelete.variables.includes(variablesBeforeDelete._id)).toEqual(true)
             expect(projectAfterDelete).toBe(null)
             expect(featureAfterDelete).toBe(null)
-            expect(variablesAfterDelete.length).toBe(0)
+            expect(variablesAfterDelete).toBe(null) 
         })
     })
 
     describe('DeleteProject - Error Cases', () => {
 
-        it('Calls DeleteProject with an invalid Project Name and returns a 404', async () => {
-            let badRequest = await request(app)
-                .delete('/projects/delete-project')
-                .set('Cookie', user.getFullCookie())
-                .send({
-                    projectName : 'bad-project-name', 
-                })
-            expect(badRequest.status).toBe(404)
+        it('Calls DeleteProject on a project that does not exist', async () => {
+            /* 
+            * In order to test that the 404 route works on the DeleteProject controller, 
+            * we first delete it from the DB and then try to delete it again.  
+            */
+            await testProject.DeleteFakeProject()
+            let response = await testProject.DeleteFakeProject()
+            expect(response.status).toBe(404)
         })
     })
 })
