@@ -22,6 +22,7 @@ class FakeUser {
         this.accessToken = response.body.accessToken
         this.ParseCookie(response)
         this.responses.createFakeAccountResponse = response
+        return response
     }  
 
     async LoginFakeAccount () {
@@ -34,6 +35,7 @@ class FakeUser {
         this.accessToken = response.body.accessToken
         this.ParseCookie(response)
         this.responses.LoginFakeAccountResponse = response
+        return response
     }
 
     getFullCookie () {
@@ -65,6 +67,7 @@ class FakeProject {
                 projectName : this.projectName, 
             })
         this.responses.CreateFakeProject = response
+        return response
     }
 
     async DeleteFakeProject () {
@@ -75,6 +78,7 @@ class FakeProject {
                 projectName : this.projectName
             })
         this.responses.DeleteFakeProject = response
+        return response
     }
 }
 
@@ -104,6 +108,7 @@ class FakeFeature {
                 featureVariableName : this.featureVariableName, 
             })
         this.responses.CreateFakeFeature = response
+        return response
     }
 
     async ChangeProductionStatus() {
@@ -115,6 +120,7 @@ class FakeFeature {
                 projectName : this.projectName, 
             })
         this.responses.ChangeProductionStatus = response
+        return response
     }
 
     async ChangeDevelopmentStatus () {
@@ -126,6 +132,7 @@ class FakeFeature {
                 projectName : this.projectName, 
             })
         this.responses.ChangeDevelopmentStatus = response
+        return response
     }
 
     async DeleteFeature () {
@@ -136,7 +143,8 @@ class FakeFeature {
                 featureName : this.featureName, 
                 projectName : this.projectName, 
             })
-        this.responses.DeleteFeature = response            
+        this.responses.DeleteFeature = response
+        return response            
     }
 }
 
@@ -163,6 +171,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.CreateFakeVariable = response
+        return response
     }
 
     async DeleteFakeVariable () {
@@ -175,6 +184,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.DeleteFakeVariable = response
+        return response
     }
 
     async UpdateProductionStatus () {
@@ -187,6 +197,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.UpdateProductionStatus = response
+        return response
     }
 
     async UpdateDevelopmentStatus () {
@@ -199,6 +210,14 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.UpdateDevelopmentStatus = response
+        return response
+    }
+
+    retrieveResponseStatus ( function_title ) {
+        if (this.responses[function_title]){
+            return this.responses[function_title]['status']
+        }
+        return null 
     }
 }
 
@@ -258,10 +277,9 @@ async function makeVariable(args) {
         fakeUser, 
         fakeProject, 
         fakeFeature, 
-        projectName, 
         newVariableName,
     } = args
-    let fakeVariable = new FakeVariable(app, fakeUser, fakeProject, fakeFeature, newVariableName, false, projectName )
+    let fakeVariable = new FakeVariable(app, fakeUser, fakeProject, fakeFeature, newVariableName, false, fakeProject.projectName )
     await fakeVariable.CreateFakeVariable()
     return fakeVariable
 }
