@@ -5,6 +5,7 @@ const {
     disconnect, 
     clearDatabase
 } = require('../config/in-memory-mongo.config') 
+const client = require('../config/redis.config')
 
 async function createFakeAccount (app, username, password) {
     const response = await request(app)
@@ -28,6 +29,7 @@ async function SetupTestEnv () {
 
 async function TakeDownTestEnv () {
     await disconnect()
+    await client.sendCommand(['FLUSHALL'])
 }
 
 async function ClearDataBase() {
