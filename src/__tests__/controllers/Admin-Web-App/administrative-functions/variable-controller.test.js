@@ -142,7 +142,7 @@ describe('Tests DeleteVariable in Variable Controller', () => {
             let getParentFeature = await Feature.findOne({ name : options.featureName })
             await Feature.findByIdAndDelete(getParentFeature._id)
             await variable.DeleteFakeVariable()
-            let response = variable.retrieveResponseStatus('DeleteFakeVariable') 
+            let response = variable.retrieveResponse('DeleteFakeVariable') 
             expect(response.status).toBe(404)
         })
     })
