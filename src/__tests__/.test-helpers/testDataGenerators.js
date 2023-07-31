@@ -1,4 +1,8 @@
 const request = require('supertest')
+const User = require('../../models/auth/user')
+const Project = require('../../models/api/project')
+const Variable = require('../../models/api/variable')
+const Feature = require('../../models/api/feature')
 
 class FakeUser {
     constructor (app, username, password) {
@@ -22,6 +26,7 @@ class FakeUser {
         this.accessToken = response.body.accessToken
         this.ParseCookie(response)
         this.responses.createFakeAccountResponse = response
+        await this.UpdateUserState()
         return response
     }  
 
@@ -35,7 +40,12 @@ class FakeUser {
         this.accessToken = response.body.accessToken
         this.ParseCookie(response)
         this.responses.LoginFakeAccountResponse = response
+        await this.UpdateUserState()
         return response
+    }
+    
+    async UpdateUserState () {
+        this.state = await User.findOne({ username : this.username })
     }
 
     getFullCookie () {
@@ -70,7 +80,8 @@ class FakeProject {
             .send({
                 projectName : this.projectName, 
             })
-        this.responses.CreateFakeProject = response
+        this.responses.UpdateProjectState = response
+        await this.UpdateProjectState()
         return response
     }
 
@@ -82,7 +93,12 @@ class FakeProject {
                 projectName : this.projectName
             })
         this.responses.DeleteFakeProject = response
+        await this.UpdateProjectState()
         return response
+    }
+
+    async UpdateProjectState () {
+        this.state = await Project.findOne({ name : this.projectName })
     }
 
     retrieveResponse ( function_title ) {
@@ -116,6 +132,7 @@ class FakeFeature {
                 featureVariableName : this.featureVariableName, 
             })
         this.responses.CreateFakeFeature = response
+        await this.UpdateFeatureState()
         return response
     }
 
@@ -128,6 +145,7 @@ class FakeFeature {
                 projectName : this.projectName, 
             })
         this.responses.ChangeProductionStatus = response
+        await this.UpdateFeatureState()
         return response
     }
 
@@ -140,6 +158,7 @@ class FakeFeature {
                 projectName : this.projectName, 
             })
         this.responses.ChangeDevelopmentStatus = response
+        await this.UpdateFeatureState()
         return response
     }
 
@@ -152,7 +171,12 @@ class FakeFeature {
                 projectName : this.projectName, 
             })
         this.responses.DeleteFeature = response
+        await this.UpdateFeatureState()
         return response            
+    }
+
+    async UpdateFeatureState () {
+        this.state = await Feature.findOne({ name : this.featureName })
     }
 
     retrieveResponse ( function_title ) {
@@ -183,6 +207,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.CreateFakeVariable = response
+        await this.UpdateVariableState()
         return response
     }
 
@@ -196,6 +221,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.DeleteFakeVariable = response
+        await this.UpdateVariableState()
         return response
     }
 
@@ -209,6 +235,7 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.UpdateProductionStatus = response
+        await this.UpdateVariableState()
         return response
     }
 
@@ -222,8 +249,14 @@ class FakeVariable {
                 projectName : this.projectName
             })
         this.responses.UpdateDevelopmentStatus = response
+        await this.UpdateVariableState()
         return response
     }
+
+    async UpdateVariableState () {
+        this.state = await Variable.findOne({ name : this.name })
+    }
+
 
     retrieveResponse ( function_title ) {
         return this.responses[function_title]
