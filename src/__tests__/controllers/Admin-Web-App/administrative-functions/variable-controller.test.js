@@ -3,13 +3,11 @@ const {
     SetupTestEnv, 
     TakeDownTestEnv, 
     clearDatabase
-} = require('../../../test-helpers')
+} = require('../../../.test-helpers/general-helpers')
 const {
     makeUserProjectFeatureandVariable, 
-    makeVariable, 
-} = require('../../../testDataGenerators')
+} = require('../../../.test-helpers/testDataGenerators')
 
-const Project = require('../../../../models/api/project')
 const Feature = require('../../../../models/api/feature')
 const Variable = require('../../../../models/api/variable')
 

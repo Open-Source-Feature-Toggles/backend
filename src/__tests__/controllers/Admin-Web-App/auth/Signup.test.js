@@ -2,17 +2,14 @@ const request = require('supertest')
 const { 
     SetupTestEnv, 
     TakeDownTestEnv, 
-    LoginFakeAccount, 
-    ParseCookie, 
-} = require('../../../test-helpers')
+} = require('../../../.test-helpers/general-helpers')
 const { 
     makeUser
-} = require('../../../testDataGenerators')
+} = require('../../../.test-helpers/testDataGenerators')
 let app, fakeUser
 const USERNAME = 'fakeuser' 
 const PASSWORD = 'fakepassword'
 const CONFIRM_PASSWORD = PASSWORD
-let signUpAttempt
 
 beforeAll( async () => {
     app = await SetupTestEnv()

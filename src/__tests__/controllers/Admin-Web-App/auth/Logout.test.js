@@ -2,10 +2,8 @@ const request = require('supertest')
 const { 
     SetupTestEnv, 
     TakeDownTestEnv, 
-    createFakeAccount, 
-    ParseCookie, 
-} = require('../../../test-helpers')
-const { makeUser } = require('../../../testDataGenerators')
+} = require('../../../.test-helpers/general-helpers')
+const { makeUser } = require('../../../.test-helpers/testDataGenerators')
 const { clearDatabase } = require('../../../../config/in-memory-mongo.config')
 const User = require('../../../../models/auth/user')
 let app
