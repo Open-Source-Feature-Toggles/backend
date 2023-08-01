@@ -8,4 +8,11 @@ async function getPayload (app, apiKey) {
     return response.body
 }
 
-module.exports = getPayload
+function getVariableFromCache (cache, feature, variable) {
+    return cache?.features.feature?.variable
+}
+
+module.exports = { 
+    getPayload, 
+    getVariableFromCache
+}

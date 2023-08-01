@@ -11,7 +11,10 @@ const {
     makeUserProjectAndFeature, 
     makeUserProjectFeatureandVariable, 
 } = require('../.test-helpers/testDataGenerators')
-const getPayload = require('../.test-helpers/cache-helpers')
+const {
+    getPayload, 
+    getVariableFromCache, 
+} = require('../.test-helpers/cache-helpers')
 let app, options 
 
 afterEach( async () => {
@@ -60,11 +63,17 @@ describe('Tests RebuildProdCache', () => {
     it('Changes the production status of feature and rebuilds the production cache', async () => {
         await feature.ChangeProductionStatus()
         let newProdCache = await getPayload(app, productionApiKey)
+        console.log(oldProdCache)
         console.log(newProdCache)
-        // expect(oldProdCache.features[options.featureName]).toBe(undefined)
-        // expect(oldProdCache.features[options.featureName]).toBe()
+        // expect(getVariableFromCache(oldProdCache, ))
     })
 
+    it('Changes the development status of feature and rebuilds the development cache', async () => {
+        await variable.UpdateProductionStatus()
+        let newProdCache = await getPayload(app, productionApiKey)
+        console.log(oldProdCache)
+        console.log(newProdCache)
+    })
 
 })
 
