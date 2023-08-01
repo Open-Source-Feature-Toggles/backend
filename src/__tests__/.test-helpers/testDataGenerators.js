@@ -80,7 +80,7 @@ class FakeProject {
             .send({
                 projectName : this.projectName, 
             })
-        this.responses.UpdateProjectState = response
+        this.responses.CreateFakeProject = response
         await this.UpdateProjectState()
         return response
     }
