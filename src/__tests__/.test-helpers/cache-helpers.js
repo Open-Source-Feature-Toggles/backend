@@ -16,8 +16,8 @@ function getVariableFromCache (cache, feature, variable) {
                 return entry[variable]
             }
         }
-        return undefined
     }
+    return undefined
 }
 
 async function showKeys () {
@@ -47,6 +47,14 @@ async function getPayload (app, apiKey) {
     })
 }
 
+async function getProjectsCacheEntries (project) {
+    let [ devCacheEntry, prodCacheEntry ] = await Promise.all([
+        readCache(project.state.developmentApiKey), 
+        readCache(project.state.productionApiKey)
+    ])
+    return [ devCacheEntry, prodCacheEntry ]
+}
+
 
 module.exports = { 
     getPayload, 
@@ -55,4 +63,5 @@ module.exports = {
     getOutputByKey, 
     readCache,  
     getPayload, 
+    getProjectsCacheEntries, 
 }
