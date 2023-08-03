@@ -12,11 +12,15 @@ async function connect_redis () {
     }
 }
 
+function isCacheConnected () {
+    return cacheConnected
+}
+
 if (!client){
     connect_redis()
 }
 
 module.exports =  { 
     client,  
-    cacheConnected, 
+    isCacheConnected, 
 } 
