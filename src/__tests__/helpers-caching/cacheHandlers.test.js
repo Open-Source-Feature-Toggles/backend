@@ -15,24 +15,15 @@ const {
     getVariableFromCache, 
     getProjectsCacheEntries, 
 } = require('../.test-helpers/cache-test-helpers')
+const fakeData = require('../.test-helpers/constants')
 
-let app, options 
+let app 
 let user, project, feature, variable, productionApiKey, developmentApiKey
 let emptyDevCache, emptyProdCache
 
 beforeAll( async () => {
     app = await SetupTestEnv()
-    options = {
-        app : app, 
-        username : 'fakeuser', 
-        password : 'fakepassword', 
-        projectName : 'fake-project', 
-        featureName : 'fake-feature', 
-        description : 'fake-description', 
-        initialVariableKey : 'variable-key', 
-        featureVariableName : 'variable-1', 
-        newVariableName : 'variable-2'
-    }    
+    fakeData.app = app
 })
 
 afterAll( async () => {
@@ -51,7 +42,7 @@ function runMakeUserProjectFeatureVariable () {
             fakeProject, 
             fakeFeature, 
             fakeVariable, 
-        } = await makeUserProjectFeatureandVariable(options)
+        } = await makeUserProjectFeatureandVariable(fakeData)
         user = fakeUser
         project = fakeProject
         feature = fakeFeature
@@ -80,10 +71,10 @@ describe('RebuildProdCache', () => {
         * booleans for each of the feature's variables  
         */
         let updatedCache = await readCache(productionApiKey)
-        expect(getVariableFromCache(emptyProdCache, options.featureName, options.initialVariableKey)).toBe(undefined)
-        expect(getVariableFromCache(emptyProdCache, options.featureName, options.featureVariableName)).toBe(undefined)
-        expect(getVariableFromCache(updatedCache, options.featureName, options.initialVariableKey)).toBe(false)
-        expect(getVariableFromCache(updatedCache, options.featureName, options.newVariableName)).toBe(false)
+        expect(getVariableFromCache(emptyProdCache, fakeData.featureName, fakeData.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(emptyProdCache, fakeData.featureName, fakeData.featureVariableName)).toBe(undefined)
+        expect(getVariableFromCache(updatedCache, fakeData.featureName, fakeData.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(updatedCache, fakeData.featureName, fakeData.newVariableName)).toBe(false)
     })
     it('Turns a variable\'s production status on', async () => {
         /* 
@@ -93,8 +84,8 @@ describe('RebuildProdCache', () => {
         let cacheBeforeChange = await readCache(productionApiKey)
         await variable.UpdateProductionStatus()
         let cacheAfterChange = await readCache(productionApiKey)
-        expect(getVariableFromCache(cacheBeforeChange, options.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(cacheAfterChange, options.featureName, options.newVariableName)).toBe(true)
+        expect(getVariableFromCache(cacheBeforeChange, fakeData.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(cacheAfterChange, fakeData.featureName, fakeData.newVariableName)).toBe(true)
     })
     it('Turns a feature\'s production status back off after being turned on', async () => {
         /* 
@@ -105,8 +96,8 @@ describe('RebuildProdCache', () => {
         await feature.ChangeProductionStatus()
         let cacheAfterChange = await readCache(productionApiKey)
         expect(feature.state.productionEnabled).toBe(false)
-        expect(getVariableFromCache(cacheBeforeChange, options.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(cacheAfterChange, options.featureName, options.newVariableName)).toBe(undefined)
+        expect(getVariableFromCache(cacheBeforeChange, fakeData.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(cacheAfterChange, fakeData.featureName, fakeData.newVariableName)).toBe(undefined)
     })
 })
 
@@ -123,10 +114,10 @@ describe('RebuildDevCache', () => {
         * booleans for each of the feature's variables 
         */
         let updatedCache = await readCache(developmentApiKey)
-        expect(getVariableFromCache(emptyDevCache, options.featureName, options.initialVariableKey)).toBe(undefined)
-        expect(getVariableFromCache(emptyDevCache, options.featureName, options.featureVariableName)).toBe(undefined)
-        expect(getVariableFromCache(updatedCache, options.featureName, options.initialVariableKey)).toBe(false)
-        expect(getVariableFromCache(updatedCache, options.featureName, options.newVariableName)).toBe(false)
+        expect(getVariableFromCache(emptyDevCache, fakeData.featureName, fakeData.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(emptyDevCache, fakeData.featureName, fakeData.featureVariableName)).toBe(undefined)
+        expect(getVariableFromCache(updatedCache, fakeData.featureName, fakeData.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(updatedCache, fakeData.featureName, fakeData.newVariableName)).toBe(false)
     })
     it('Turns a variable\'s development status on', async () => {
         /* 
@@ -136,8 +127,8 @@ describe('RebuildDevCache', () => {
         let cacheBeforeChange = await readCache(developmentApiKey)
         await variable.UpdateDevelopmentStatus()
         let cacheAfterChange = await readCache(developmentApiKey)
-        expect(getVariableFromCache(cacheBeforeChange, options.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(cacheAfterChange, options.featureName, options.newVariableName)).toBe(true)
+        expect(getVariableFromCache(cacheBeforeChange, fakeData.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(cacheAfterChange, fakeData.featureName, fakeData.newVariableName)).toBe(true)
     })
     it('Should remove the feature from the cache\'s payload when it is disabled', async () => {
         /* 
@@ -148,8 +139,8 @@ describe('RebuildDevCache', () => {
         await feature.ChangeDevelopmentStatus()
         let cacheAfterChange = await readCache(developmentApiKey)
         expect(feature.state.developmentEnabled).toBe(false)
-        expect(getVariableFromCache(cacheBeforeChange, options.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(cacheAfterChange, options.featureName, options.newVariableName)).toBe(undefined)
+        expect(getVariableFromCache(cacheBeforeChange, fakeData.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(cacheAfterChange, fakeData.featureName, fakeData.newVariableName)).toBe(undefined)
     })
 })
 
@@ -169,7 +160,7 @@ describe('RebuildBothCaches', () => {
         let {
             fakeUser, 
             fakeProject
-        } = await makeUsernandProject(app, options.username, options.password, options.projectName)
+        } = await makeUsernandProject(app, fakeData.username, fakeData.password, fakeData.projectName)
         let [ 
             devCacheBeforeRebuild, 
             prodCacheBeforeRebuild 
@@ -180,9 +171,9 @@ describe('RebuildBothCaches', () => {
             fakeUser, 
             projectName : fakeProject.state.name, 
             featureName : 'another-feature', 
-            description : options.description, 
-            initialVariableKey : options.initialVariableKey, 
-            featureVariableName : options.featureVariableName,  
+            description : fakeData.description, 
+            initialVariableKey : fakeData.initialVariableKey, 
+            featureVariableName : fakeData.featureVariableName,  
         }) 
         let [ 
             devCacheAfterRebuild, 
@@ -205,7 +196,7 @@ describe('RebuildBothCaches', () => {
             fakeUser, 
             fakeProject, 
             fakeFeature, 
-        } = await makeUserProjectAndFeature(options)
+        } = await makeUserProjectAndFeature(fakeData)
         await Promise.all([
             fakeFeature.ChangeProductionStatus(), 
             fakeFeature.ChangeDevelopmentStatus(), 
@@ -242,7 +233,7 @@ describe('RebuildBothCaches', () => {
         let {
             fakeProject, 
             fakeFeature, 
-        } = await makeUserProjectAndFeature(options)
+        } = await makeUserProjectAndFeature(fakeData)
         await Promise.all([
             fakeFeature.ChangeProductionStatus(), 
             fakeFeature.ChangeDevelopmentStatus(), 
@@ -256,10 +247,10 @@ describe('RebuildBothCaches', () => {
             devCacheAfterRebuild, 
             prodCacheAfterRebuild 
         ] = await getProjectsCacheEntries(fakeProject)
-        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(false)
-        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(false)
-        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
-        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, fakeData.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, fakeData.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, fakeData.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, fakeData.initialVariableKey)).toBe(undefined)
     })
     it('Should rebuild both caches when a variable is deleted', async () => {
         /* 
@@ -271,7 +262,7 @@ describe('RebuildBothCaches', () => {
             fakeProject, 
             fakeFeature, 
             fakeVariable
-        } = await makeUserProjectFeatureandVariable(options)
+        } = await makeUserProjectFeatureandVariable(fakeData)
         await Promise.all([
             fakeFeature.ChangeDevelopmentStatus(), 
             fakeFeature.ChangeProductionStatus(),  
@@ -285,10 +276,10 @@ describe('RebuildBothCaches', () => {
             devCacheAfterRebuild, 
             prodCacheAfterRebuild 
         ] = await getProjectsCacheEntries(fakeProject)
-        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, options.newVariableName)).toBe(false)
-        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, options.newVariableName)).toBe(undefined)
-        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, options.newVariableName)).toBe(undefined)
+        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, fakeData.newVariableName)).toBe(false)
+        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, fakeData.newVariableName)).toBe(undefined)
+        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, fakeData.newVariableName)).toBe(undefined)
     })
 })
 
@@ -308,7 +299,7 @@ describe('DestroyBothCaches', () => {
         */ 
         let {
             fakeProject, 
-        } = await makeUserProjectAndFeature(options)
+        } = await makeUserProjectAndFeature(fakeData)
         let developmentApiKey = fakeProject.developmentApiKey
         let productionApiKey = fakeProject.productionApiKey
         let [ 
@@ -340,7 +331,7 @@ describe('When cache is not rebuilt', () => {
         */
         let { 
             fakeProject
-        } = await makeUsernandProject(app, options.username, options.password, options.projectName)
+        } = await makeUsernandProject(app, fakeData.username, fakeData.password, fakeData.projectName)
         let [
             devCacheSnapshot, 
             prodCacheSnapshot

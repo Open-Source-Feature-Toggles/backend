@@ -8,27 +8,16 @@ const {
     makeVariable, 
     makeUserProjectAndFeature, 
 } = require('../../../.test-helpers/testDataGenerators')
+const fakeData = require('../../../.test-helpers/constants')
 const Feature = require('../../../../models/api/feature')
 const Project = require('../../../../models/api/project')
 const Variable = require('../../../../models/api/variable')
 
-let app, goodOptions 
-const USERNAME = 'fakeuser' 
-const PASSWORD = 'fakepassword'
+let app
 
 beforeAll( async () => {
-    jest.setTimeout(600000)
     app = await SetupTestEnv()
-    goodOptions = {
-        app,  
-        username : USERNAME, 
-        password : PASSWORD, 
-        projectName : 'fake-project', 
-        featureName : 'fake-feature', 
-        description : 'a-feature', 
-        initialVariableKey : 'a-variable', 
-        featureVariableName : 'a-variable', 
-    }
+    fakeData.app = app 
 })
 
 afterAll( async () => {
@@ -38,7 +27,7 @@ afterAll( async () => {
 
 let user, project, feature 
 beforeEach( async () => {
-    const {fakeUser, fakeProject, fakeFeature} = await makeUserProjectAndFeature(goodOptions)
+    const {fakeUser, fakeProject, fakeFeature} = await makeUserProjectAndFeature(fakeData)
     user = fakeUser 
     project = fakeProject
     feature = fakeFeature
@@ -59,9 +48,9 @@ describe('Tests ChangeProductionStatus function in Feature Controller', () => {
         })
     
         it('Checks that feature.productionEnabled was changed to true', async () => {
-            let beforeChange = await Feature.findOne({ name : goodOptions.featureName }) 
+            let beforeChange = await Feature.findOne({ name : fakeData.featureName }) 
             await feature.ChangeProductionStatus()
-            let afterChange = await Feature.findOne({ name : goodOptions.featureName }) 
+            let afterChange = await Feature.findOne({ name : fakeData.featureName }) 
             expect(beforeChange.productionEnabled).toBe(false)
             expect(afterChange.productionEnabled).toBe(true)
         })    
@@ -87,9 +76,9 @@ describe('Tests ChangeDevelopmentStatus function in Feature Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Checks that feature.developmentEnabled was changed to true', async () => {
-            let beforeChange = await Feature.findOne({ name : goodOptions.featureName }) 
+            let beforeChange = await Feature.findOne({ name : fakeData.featureName }) 
             await feature.ChangeDevelopmentStatus()
-            let afterChange = await Feature.findOne({ name : goodOptions.featureName }) 
+            let afterChange = await Feature.findOne({ name : fakeData.featureName }) 
             expect(beforeChange.developmentEnabled).toBe(false)
             expect(afterChange.developmentEnabled).toBe(true)
         })
@@ -114,9 +103,9 @@ describe('Tests DeleteFeature function in Feature Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Successfully deletes a feature', async () => {
-            let beforeChange = await Feature.findOne({ name : goodOptions.featureName })
+            let beforeChange = await Feature.findOne({ name : fakeData.featureName })
             await feature.DeleteFeature()
-            let afterChange = await Feature.findOne({ name : goodOptions.featureName })
+            let afterChange = await Feature.findOne({ name : fakeData.featureName })
             expect(beforeChange).not.toBe(null)
             expect(afterChange).toBe(null)
         })
@@ -128,11 +117,11 @@ describe('Tests DeleteFeature function in Feature Controller', () => {
             * We then perform the delete and repeat the last two steps to ensure 
             * the feature was removed from the project's array 
             */  
-            let featureID = (await Feature.findOne({ name : goodOptions.featureName }))._id
-            let projectBeforeDelete = await Project.findOne({ name : goodOptions.projectName })
+            let featureID = (await Feature.findOne({ name : fakeData.featureName }))._id
+            let projectBeforeDelete = await Project.findOne({ name : fakeData.projectName })
             let isFeatureIdinProjectArray = projectBeforeDelete.features.includes(featureID)
             await feature.DeleteFeature()
-            let projectAfterDelete = await Project.findOne({ name : goodOptions.projectName })
+            let projectAfterDelete = await Project.findOne({ name : fakeData.projectName })
             let isFeatureIdNotInProjectArray = projectAfterDelete.features.includes(featureID)
             expect(isFeatureIdinProjectArray).toBe(true)
             expect(isFeatureIdNotInProjectArray).toBe(false)
@@ -148,12 +137,12 @@ describe('Tests DeleteFeature function in Feature Controller', () => {
                 fakeUser : user, 
                 fakeProject : project, 
                 fakeFeature : feature, 
-                projectName : goodOptions.projectName, 
+                projectName : fakeData.projectName, 
                 newVariableName : 'newVariable'
             })
-            let childVariableBeforeDelete = await Variable.find({ parentFeatureName : goodOptions.featureName})
+            let childVariableBeforeDelete = await Variable.find({ parentFeatureName : fakeData.featureName})
             await feature.DeleteFeature()
-            let childVariableAfterDelete = await Variable.find({ parentFeatureName : goodOptions.featureName})
+            let childVariableAfterDelete = await Variable.find({ parentFeatureName : fakeData.featureName})
             expect(childVariableBeforeDelete.length).toBe(2)
             expect(childVariableAfterDelete.length).toBe(0)
         })
@@ -192,21 +181,21 @@ describe('Tests MakeNewFeature function in Feature Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Successfully creates a new feature', async () => {
-            let findFeature = await Feature.findOne({ name : goodOptions.featureName })
+            let findFeature = await Feature.findOne({ name : fakeData.featureName })
             expect(findFeature).not.toBe(null)
         })
         it('Successfully creates a child variable and adds it ', async () => {
             let [findChildVariable, findFeature ] = await Promise.all([
-                Variable.findOne({ parentFeatureName : goodOptions.featureName }), 
-                Feature.findOne({ name : goodOptions.featureName })
+                Variable.findOne({ parentFeatureName : fakeData.featureName }), 
+                Feature.findOne({ name : fakeData.featureName })
             ]) 
             let variableID = findChildVariable._id
             expect(findFeature.variables.includes(variableID)).toBe(true)
         })
         it('Successfully adds new feature\'s id to project\'s feature array', async () => {
             let [ findFeature, findParentProject ] = await Promise.all([
-                Feature.findOne({ name: goodOptions.featureName }), 
-                Project.findOne({ name : goodOptions.projectName })
+                Feature.findOne({ name: fakeData.featureName }), 
+                Project.findOne({ name : fakeData.projectName })
             ])
             let featureID = findFeature._id
             expect(findParentProject.features.includes(featureID)).toBe(true)
@@ -218,7 +207,7 @@ describe('Tests MakeNewFeature function in Feature Controller', () => {
         it('Tries to create a feature with a name/owner that already exists and returns a 409', async () => {
             /* 
             * At the beginning of the script, we call CreateFakeFeature with
-            * a feature name that's taken from the goodOptions object. Here, 
+            * a feature name that's taken from the fakeData object. Here, 
             * we try to create the same feature again with the same options (same owner, project,
             * and feature name) as the one that was initially created. 
             */ 

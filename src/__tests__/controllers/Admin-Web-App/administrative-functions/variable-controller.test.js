@@ -7,14 +7,16 @@ const {
 const {
     makeUserProjectFeatureandVariable, 
 } = require('../../../.test-helpers/testDataGenerators')
+const fakeData = require('../../../.test-helpers/constants')
 
 const Feature = require('../../../../models/api/feature')
 const Variable = require('../../../../models/api/variable')
 
-let app, user, project, feature, variable, options  
+let app, user, project, feature, variable  
 
 beforeAll( async () => {
     app = await SetupTestEnv()
+    fakeData.app = app
 })
 
 afterAll( async () => {
@@ -22,23 +24,12 @@ afterAll( async () => {
 })
 
 beforeEach( async () => {
-    options = {
-        app : app, 
-        username : 'fakeuser', 
-        password : 'fakepassword', 
-        projectName : 'fake-project', 
-        featureName : 'fake-feature', 
-        description : 'fake-description', 
-        initialVariableKey : 'variable-key', 
-        featureVariableName : 'variable-1', 
-        newVariableName : 'variable-2'
-    }    
     let { 
         fakeUser, 
         fakeProject, 
         fakeFeature, 
         fakeVariable
-    } = await makeUserProjectFeatureandVariable(options)
+    } = await makeUserProjectFeatureandVariable(fakeData)
     user = fakeUser, 
     project = fakeProject, 
     feature = fakeFeature, 
@@ -58,12 +49,12 @@ describe('Tests MakeNewVariable in Variable Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Creates a new variable with given variable name', async () => {
-            let findVariable = await Variable.findOne({ name: options.newVariableName })
+            let findVariable = await Variable.findOne({ name: fakeData.newVariableName })
             expect(findVariable).not.toBe(null)
         })
         it('Places newly created variable inside of parent feature\'s variable array', async () => {
-            let feature = await Feature.findOne({ name : options.featureName })
-            let variableID = (await Variable.findOne({ name: options.newVariableName }))._id
+            let feature = await Feature.findOne({ name : fakeData.featureName })
+            let variableID = (await Variable.findOne({ name: fakeData.newVariableName }))._id
             expect(feature.variables.includes(variableID)).toBe(true)
         })
     })
@@ -102,7 +93,7 @@ describe('Tests DeleteVariable in Variable Controller', () => {
 
         let deletedVariableID 
         beforeEach( async () => {
-            deletedVariableID = (await Variable.findOne({ name : options.newVariableName }))._id
+            deletedVariableID = (await Variable.findOne({ name : fakeData.newVariableName }))._id
             await variable.DeleteFakeVariable()
         })
 
@@ -111,11 +102,11 @@ describe('Tests DeleteVariable in Variable Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Successfully deletes a variable after DeleteVariable is called', async () => {
-            let checkIfVariableDeleted = await Variable.findOne({ name: options.newVariableName })
+            let checkIfVariableDeleted = await Variable.findOne({ name: fakeData.newVariableName })
             expect(checkIfVariableDeleted).toBe(null)
         })
         it('Successfully removes variable from parent feature array', async () => {
-            let parentFeature = await Feature.findOne({ name : options.featureName })
+            let parentFeature = await Feature.findOne({ name : fakeData.featureName })
             expect(parentFeature.variables.includes(deletedVariableID)).toBe(false)
         })
     })
@@ -137,7 +128,7 @@ describe('Tests DeleteVariable in Variable Controller', () => {
             * First delete variable's parent feature, then try to delete variable, 
             * causing the controller to return a 404 
             */
-            let getParentFeature = await Feature.findOne({ name : options.featureName })
+            let getParentFeature = await Feature.findOne({ name : fakeData.featureName })
             await Feature.findByIdAndDelete(getParentFeature._id)
             await variable.DeleteFakeVariable()
             let response = variable.retrieveResponse('DeleteFakeVariable') 
@@ -156,9 +147,9 @@ describe('Tests UpdateProductionStatus in Variable Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Checks to see that the production status was updated', async () => {
-            let beforeUpdate = await Variable.findOne({ name : options.newVariableName })
+            let beforeUpdate = await Variable.findOne({ name : fakeData.newVariableName })
             await variable.UpdateProductionStatus()
-            let afterUpdate = await Variable.findOne({ name : options.newVariableName })
+            let afterUpdate = await Variable.findOne({ name : fakeData.newVariableName })
             expect(beforeUpdate.productionEnabled).toBe(false)
             expect(afterUpdate.productionEnabled).toBe(true)
         })
@@ -184,9 +175,9 @@ describe('Tests UpdateDevelopmentStatus in Variable Controller', () => {
             expect(response.status).toBe(200)
         })
         it('Checks to see that the development status was updated', async () => {
-            let beforeUpdate = await Variable.findOne({ name : options.newVariableName })
+            let beforeUpdate = await Variable.findOne({ name : fakeData.newVariableName })
             await variable.UpdateDevelopmentStatus()
-            let afterUpdate = await Variable.findOne({ name : options.newVariableName })
+            let afterUpdate = await Variable.findOne({ name : fakeData.newVariableName })
             expect(beforeUpdate.developmentEnabled).toBe(false)
             expect(afterUpdate.developmentEnabled).toBe(true)
         })
