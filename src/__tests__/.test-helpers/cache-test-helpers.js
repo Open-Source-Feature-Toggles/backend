@@ -1,11 +1,14 @@
 const request = require('supertest')
 const client = require('../../config/redis.config')
 
-async function requestPayload (app, apiKey) {
-    let response = await request(app)
+async function requestPayload (app, apiKey, last_updated=null) {
+    let response = request(app)
         .get('/api/payload')
         .set('Authorization', apiKey)
-    return response.body
+    if (last_updated) {
+        response = response.query({ last_updated })
+    }
+    return await response
 }
 
 function getVariableFromCache (cache, feature, variable) {
@@ -27,6 +30,10 @@ async function showKeys () {
 async function getOutputByKey (key) {
     let string = await client.sendCommand(['GET', `${key}`])
     return JSON.parse(string)
+}
+
+async function flushCache () {
+    return await client.sendCommand(['FLUSHALL'])
 }
 
 async function readCache (apiKey) {
@@ -64,4 +71,6 @@ module.exports = {
     readCache,  
     getPayload, 
     getProjectsCacheEntries, 
+    requestPayload, 
+    flushCache, 
 }
