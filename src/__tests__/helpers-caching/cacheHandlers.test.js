@@ -14,7 +14,7 @@ const {
     readCache, 
     getVariableFromCache, 
     getProjectsCacheEntries, 
-} = require('../.test-helpers/cache-helpers')
+} = require('../.test-helpers/cache-test-helpers')
 
 let app, options 
 let user, project, feature, variable, productionApiKey, developmentApiKey
