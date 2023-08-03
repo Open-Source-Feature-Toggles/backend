@@ -25,21 +25,28 @@ const DEV = 'Dev'
 const PROD = 'Prod'
 
 
-async function RebuildDevCache (req, res, next, project=null) {
+async function RebuildDevCache (req, project=null) {
     await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
 }
 
-async function RebuildProdCache (req, res, next, project=null) {
+async function RebuildProdCache (req, project=null) {
     await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
+}
+
+async function buildProjectPayload (QueryFeaturesFunction, apiKey, enabledType) {
+    let features = await QueryFeaturesFunction(project[apiKey])
+    let variables = extractVariables(features)
+    variables = await QueryVariablesById(variables)
+    return buildPayload(variables, enabledType) 
 }
 
 async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
     try {
         let project = await GetProject(req, passedProject)
-        let features = await QueryFeaturesFunction(project[apiKey])
-        let variables = extractVariables(features)
-        variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, enabledType)
+        // let features = await QueryFeaturesFunction(project[apiKey])
+        // let variables = extractVariables(features)
+        // variables = await QueryVariablesById(variables)
+        let payload = buildProjectPayload(QueryFeaturesFunction, apiKey, enabledType)
         await setCache(project[apiKey], payload)
         console.log(`Successfully Rebuilt ${cacheType} Cache`)
     } catch (error) {

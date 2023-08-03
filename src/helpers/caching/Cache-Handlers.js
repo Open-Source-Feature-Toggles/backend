@@ -33,13 +33,17 @@ async function RebuildProdCache (req, res, next, project=null) {
     await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
 }
 
+async function buildProjectPayload (project, QueryFeaturesFunction, apiKey, enabledType) {
+    let features = await QueryFeaturesFunction(project[apiKey])
+    let variables = extractVariables(features)
+    variables = await QueryVariablesById(variables)
+    return buildPayload(variables, enabledType) 
+}
+
 async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
     try {
         let project = await GetProject(req, passedProject)
-        let features = await QueryFeaturesFunction(project[apiKey])
-        let variables = extractVariables(features)
-        variables = await QueryVariablesById(variables)
-        let payload = buildPayload(variables, enabledType)
+        let payload = await buildProjectPayload(project, QueryFeaturesFunction, apiKey, enabledType)
         await setCache(project[apiKey], payload)
         console.log(`Successfully Rebuilt ${cacheType} Cache`)
     } catch (error) {
