@@ -5,7 +5,7 @@ const {
     disconnect, 
     clearDatabase
 } = require('../../config/in-memory-mongo.config') 
-const client = require('../../config/redis.config')
+const { client } = require('../../config/redis.config')
 
 
 async function SetupTestEnv () {
