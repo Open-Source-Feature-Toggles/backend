@@ -16,6 +16,10 @@ const {
     buildPayload,
     GetProject, 
 } = require('../../helpers/caching/Cache-Helpers')
+const {
+    isProductionKey, 
+    isDevelopmentKey
+} = require('../../helpers/Api-Key-Helpers')
 
 const DEVELOPMENT_ENABLED = 'developmentEnabled'
 const PRODUCTION_ENABLED = 'productionEnabled'
@@ -79,16 +83,18 @@ async function DestroyCachedResults (req) {
     }
 }
 
-async function BuildPayloadOnTheFly (req, res, apiKey) {
+async function BuildPayloadOnTheFly (apiKey) {
     try {
         let getProject = await queryByApiKey(apiKey)
         if (!getProject){
-            return BadApiKeyError(res)
+            return null
         }
-        await Promise.all([
-            RebuildDevCache(req, null, null, getProject), 
-            RebuildProdCache(req, null, null, getProject), 
-        ])
+        if (isProductionKey(apiKey)){
+            return buildProjectPayload(getProject, QueryProductionFeatures, apiKey, PROD)
+        }
+        else if (isDevelopmentKey(apiKey)){
+            return buildProjectPayload(getProject, QueryDevelopmentFeatures, apiKey, DEV)
+        }
     } catch (error) {
         console.error(error)
         res.status(500)
