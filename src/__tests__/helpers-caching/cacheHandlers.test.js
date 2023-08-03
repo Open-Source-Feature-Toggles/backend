@@ -26,7 +26,7 @@ const Feature = require('../../models/api/feature')
 const Variable = require('../../models/api/variable')
 const Project = require('../../models/api/project')
 
-// jest.setTimeout(60000)
+jest.setTimeout(60000)
 
 beforeAll( async () => {
     app = await SetupTestEnv()
@@ -240,9 +240,65 @@ describe('RebuildBothCaches', () => {
         expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, variableName)).toBe(false)
     })
     it('Should rebuild both caches when a feature is deleted', async () => {
-
+        /* 
+        * Much like the other tests, we create a project and a feature (creating a feature
+        * creates a variable by default). We then change the production and development status
+        * of the feature to true, so that they are displayed in the cache. We then delete the feature
+        * and test to make sure it is undefined. 
+        */
+        let {
+            fakeProject, 
+            fakeFeature, 
+        } = await makeUserProjectAndFeature(options)
+        await Promise.all([
+            fakeFeature.ChangeProductionStatus(), 
+            fakeFeature.ChangeDevelopmentStatus(), 
+        ])
+        let [ 
+            devCacheBeforeRebuild, 
+            prodCacheBeforeRebuild 
+        ] = await getProjectsCacheEntries(fakeProject)
+        await fakeFeature.DeleteFeature()
+        let [ 
+            devCacheAfterRebuild, 
+            prodCacheAfterRebuild 
+        ] = await getProjectsCacheEntries(fakeProject)
+        console.log(devCacheBeforeRebuild)
+        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(false)
+        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
     })
-
+    it('Should rebuild both caches when a variable is deleted', async () => {
+        let {
+            fakeProject, 
+            fakeFeature, 
+            fakeVariable
+        } = await makeUserProjectFeatureandVariable(options)
+        await Promise.all([
+            fakeFeature.ChangeDevelopmentStatus(), 
+            fakeFeature.ChangeProductionStatus(), 
+            fakeVariable.UpdateDevelopmentStatus(), 
+            fakeVariable.UpdateProductionStatus(), 
+        ])
+        let [ 
+            devCacheBeforeRebuild, 
+            prodCacheBeforeRebuild 
+        ] = await getProjectsCacheEntries(fakeProject)
+        await fakeVariable.DeleteFakeVariable()
+        let [ 
+            devCacheAfterRebuild, 
+            prodCacheAfterRebuild 
+        ] = await getProjectsCacheEntries(fakeProject)
+        console.log(devCacheBeforeRebuild)
+        console.log(devCacheAfterRebuild)
+        let all_variables = await Variable.find()
+        console.log(all_variables)
+        expect(getVariableFromCache(devCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(true)
+        expect(getVariableFromCache(prodCacheBeforeRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(true)
+        expect(getVariableFromCache(devCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
+        expect(getVariableFromCache(prodCacheAfterRebuild, fakeFeature.featureName, options.initialVariableKey)).toBe(undefined)
+    })
 })
 
 
