@@ -2,7 +2,7 @@ const {
     SetupTestEnv,
     TakeDownTestEnv, 
     clearDatabase, 
-} = require('../.test-helpers/general-helpers') 
+} = require('../.test-helpers/test-env-manager') 
 const {
     makeFeature, 
     makeVariable, 

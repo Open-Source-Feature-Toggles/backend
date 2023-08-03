@@ -3,7 +3,7 @@ const {
     SetupTestEnv, 
     TakeDownTestEnv, 
     ParseCookie
-} = require('../../../.test-helpers/general-helpers')
+} = require('../../../.test-helpers/test-env-manager')
 const { makeUser } = require('../../../.test-helpers/testDataGenerators')
 let app, fakeAccount
 const GOOD_USERNAME = 'fakeuser' 

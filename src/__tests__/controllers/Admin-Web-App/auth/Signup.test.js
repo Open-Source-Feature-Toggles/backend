@@ -2,7 +2,7 @@ const request = require('supertest')
 const { 
     SetupTestEnv, 
     TakeDownTestEnv, 
-} = require('../../../.test-helpers/general-helpers')
+} = require('../../../.test-helpers/test-env-manager')
 const { 
     makeUser
 } = require('../../../.test-helpers/testDataGenerators')
