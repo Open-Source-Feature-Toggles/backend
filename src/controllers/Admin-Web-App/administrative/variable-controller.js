@@ -55,7 +55,7 @@ async function MakeNewVariable (req, res, next) {
 }
 
 
-async function DeleteVariable (req, res) {
+async function DeleteVariable (req, res, next) {
     try {
         let {
             name, 
@@ -80,6 +80,7 @@ async function DeleteVariable (req, res) {
             Variable.findByIdAndDelete(checkIfVariableExists._id)
         ])
         res.sendStatus(200)
+        return next()
     } catch (error) {
         console.error(error)
         res.sendStatus(500)
