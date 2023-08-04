@@ -8,18 +8,20 @@ function LoadEnvironment () {
 
     // Load Environment Variables and Connect Mongo 
     switch (process.env.NODE_ENV) {
+        case 'production' : 
+            dotenv.config({ path : path.join(__dirname, '../../.env.production') })
+            break
         case 'development' : 
             dotenv.config({ path : path.join(__dirname, '../../.env.development') })
-            require('./mongo.config')
             break 
         case 'testing' :
             dotenv.config({ path : path.join(__dirname, '../../.env.testing') })
-            break  
+            break 
     }
 
-    // Load Redis 
+    // Load Database and Redis 
+    require('./mongo.config')
     require('./redis.config')
-
 }
 
 

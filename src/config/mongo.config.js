@@ -1,7 +1,12 @@
 const mongoose = require('mongoose')
 
-if (process.env.NODE_ENV === 'development'){
-    ConnectDB(process.env.CONNECTION_STRING)
+switch (process.env.NODE_ENV) {
+    case 'production' :
+        ConnectDB(process.env.MONGO_PRODUCTION_STRING)
+        break 
+    case 'development' : 
+        ConnectDB(process.env.MONGO_DEVELOPMENT_STRING)
+        break 
 }
 
 async function ConnectDB (connection_string) {
