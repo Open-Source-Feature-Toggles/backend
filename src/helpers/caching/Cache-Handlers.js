@@ -2,7 +2,7 @@ const { BadApiKeyError } = require('../../helpers/common-error-messages')
 const { QueryVariablesById } = require('../../helpers/common-queries/variable-queries')
 const { 
     setCache, 
-    removeKey 
+    removeKey, 
 } = require('./Redis-Helpers')
 const { 
     queryByApiKey, 
@@ -20,6 +20,7 @@ const {
     isProductionKey, 
     isDevelopmentKey
 } = require('../../helpers/Api-Key-Helpers')
+const { isCacheConnected } = require('../../config/redis.config')
 
 const DEVELOPMENT_ENABLED = 'developmentEnabled'
 const PRODUCTION_ENABLED = 'productionEnabled'
@@ -30,11 +31,13 @@ const PROD = 'Prod'
 
 
 async function RebuildDevCache (req, res, next, project=null) {
-    await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
+    if (!isCacheConnected){ return }
+    return await RebuildCache(req, QueryDevelopmentFeatures, DEVELOPMENT_API_KEY, DEVELOPMENT_ENABLED, project, DEV)
 }
 
 async function RebuildProdCache (req, res, next, project=null) {
-    await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
+    if (!isCacheConnected){ return }
+    return await RebuildCache(req, QueryProductionFeatures, PRODUCTION_API_KEY, PRODUCTION_ENABLED, project, PROD)
 }
 
 async function buildProjectPayload (project, QueryFeaturesFunction, apiKey, enabledType) {
@@ -50,12 +53,14 @@ async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, pa
         let payload = await buildProjectPayload(project, QueryFeaturesFunction, apiKey, enabledType)
         await setCache(project[apiKey], payload)
         console.log(`Successfully Rebuilt ${cacheType} Cache`)
+        return payload
     } catch (error) {
         console.error(error)
     }
 }
 
 async function RebuildBothCaches (req) {
+    if (!isCacheConnected){ return }
     try {
         let project = await GetProject(req, null)
         await Promise.all([
@@ -68,6 +73,7 @@ async function RebuildBothCaches (req) {
 }
 
 async function DestroyCachedResults (req) {
+    if (!isCacheConnected){ return }
     try {
         let { 
             productionApiKey,  
@@ -84,6 +90,7 @@ async function DestroyCachedResults (req) {
 }
 
 async function BuildPayloadOnTheFly (apiKey) {
+    if (!isCacheConnected){ return }
     try {
         let getProject = await queryByApiKey(apiKey)
         if (!getProject){
@@ -108,4 +115,5 @@ module.exports = {
     RebuildBothCaches, 
     DestroyCachedResults, 
     BuildPayloadOnTheFly, 
+    BuildCacheOnTheFly, 
 }
