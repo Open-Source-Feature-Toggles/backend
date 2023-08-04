@@ -1,14 +1,20 @@
 const redis = require('redis')
 let client, cacheConnected = false 
+let attempts = 0 
 
 async function connect_redis () {
     try {
-        client = redis.createClient()
+        client = redis.createClient({
+            socket: {
+              reconnectStrategy: retries => { console.log(retries) ; return Math.min(retries * 50, 5000) } 
+            }
+        })
         client.on('ready', () => {
             cacheConnected = true 
             console.log(`[CONNECTED] Redis`)
         })
         client.on('error', () => {
+            console.log(`Attempting to connect ${++attempts}`)
             cacheConnected = false 
         })
         client.on('end', () => {
