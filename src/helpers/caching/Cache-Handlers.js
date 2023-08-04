@@ -108,6 +108,24 @@ async function BuildPayloadOnTheFly (apiKey) {
     }
 }
 
+async function BuildCacheOnTheFly (req, apiKey) {
+    try {
+        let getProject = await queryByApiKey(apiKey)
+        if (!getProject){
+            return BadApiKeyError(res)
+        }
+        if (isProductionKey(apiKey)){
+            return await RebuildProdCache(req, null, null, getProject)
+        }
+        if (isDevelopmentKey(apiKey)){
+            return await RebuildProdCache(req, null, null, getProject)
+        }
+    } catch (error) {
+        console.error(error)
+        res.status(500)
+    }
+}
+
 
 module.exports = {
     RebuildDevCache, 
