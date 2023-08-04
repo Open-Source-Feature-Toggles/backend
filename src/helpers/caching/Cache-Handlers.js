@@ -110,6 +110,7 @@ async function BuildPayloadOnTheFly (apiKey) {
 
 async function BuildCacheOnTheFly (req, apiKey) {
     try {
+        if (!isCacheConnected){ return }
         let getProject = await queryByApiKey(apiKey)
         if (!getProject){
             return BadApiKeyError(res)
