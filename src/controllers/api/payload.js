@@ -2,8 +2,8 @@ const { BadApiKeyError } = require('../../helpers/common-error-messages')
 const { getApiHeaders } = require('../../helpers/Api-Key-Helpers')
 const { SearchCache } = require('../../helpers/caching/Redis-Helpers')
 const { CachedResourceValid } = require('../../helpers/http-responses/Success-Messages')
-const { BuildPayloadOnTheFly } = require('../../helpers/caching/Cache-Handlers')
-
+const { BuildPayloadOnTheFly, BuildCacheOnTheFly } = require('../../helpers/caching/Cache-Handlers')
+const { isCacheConnected } = require('../../config/redis.config')
 /* 
 
 GetPayload 
@@ -28,23 +28,27 @@ GetPayload
 async function GetPayload (req, res) {
     try {
         let apiKey = getApiHeaders(req)
-        let payload = await SearchCache(apiKey)
-        let client_last_updated = Number(req.query.last_updated)
-        if (!apiKey && !payload) {
+        if (!apiKey) {
             return BadApiKeyError(res)
         }
-        else if (payload?.last_updated === client_last_updated){
-            return CachedResourceValid(res)
-        }
-        else if (payload){
+        if (!isCacheConnected()) {
+            let payload = await BuildPayloadOnTheFly(apiKey)
+            if (!payload) {
+                return BadApiKeyError(res)
+            }
             return res.json(payload)
         }
-        else {
-            await BuildPayloadOnTheFly(req, res, apiKey)
-            payload = await SearchCache(apiKey)
-            if (payload){
-                res.json(payload)
-            }
+        let cachedPayload = await SearchCache(apiKey)
+        let client_last_updated = Number(req.query.last_updated)
+        if (!cachedPayload){
+            let payload = await BuildCacheOnTheFly(req, apiKey)
+            return res.json(payload)
+        }
+        else if (cachedPayload.last_updated === client_last_updated){
+            return CachedResourceValid(res)
+        }
+        else if (cachedPayload){
+            return res.json(cachedPayload)
         }
     } catch (error) {
         res.status(500)

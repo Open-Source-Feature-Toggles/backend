@@ -1,5 +1,5 @@
 const request = require('supertest')
-const client = require('../../config/redis.config')
+const { client } = require('../../config/redis.config')
 
 async function requestPayload (app, apiKey, last_updated=null) {
     let response = request(app)

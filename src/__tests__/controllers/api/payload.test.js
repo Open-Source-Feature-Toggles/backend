@@ -69,7 +69,12 @@ describe('GetPayload - Success Cases', () => {
         expect(callDevAgain.status).toBe(304)
         expect(callProdAgain.status).toBe(304)
     })
-    it('Should call GetPayload and return an accurate payload when the cache has crashed', async () => {
+    it('Should call GetPayload and return an accurate payload when the cache is empty', async () => {
+        /* 
+        * In order to test that the GetPayload controller works, even in the scenario when the cache 
+        * is empty, we have to manually flush it. We ensure its empty by getting the cache entries
+        * and comparing them against the payload. 
+        */
         await flushCache()
         let [
             devCache, 
