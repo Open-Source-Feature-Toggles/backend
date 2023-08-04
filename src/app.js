@@ -15,7 +15,7 @@ function CreateApp () {
     
     // Express Middleware 
     app.use(cors({
-        origin: 'http://localhost:5173',
+        origin: 'http://henryjacobs.us',
         credentials: true, 
     }))
     app.use(morgan('dev'))
