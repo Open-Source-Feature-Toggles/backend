@@ -2,7 +2,7 @@ const { BadApiKeyError } = require('../../helpers/common-error-messages')
 const { getApiHeaders } = require('../../helpers/Api-Key-Helpers')
 const { SearchCache } = require('../../helpers/caching/Redis-Helpers')
 const { CachedResourceValid } = require('../../helpers/http-responses/Success-Messages')
-const { BuildPayloadOnTheFly } = require('../../helpers/caching/Cache-Handlers')
+const { BuildPayloadOnTheFly, BuildCacheOnTheFly } = require('../../helpers/caching/Cache-Handlers')
 const { isCacheConnected } = require('../../config/redis.config')
 /* 
 
@@ -40,9 +40,11 @@ async function GetPayload (req, res) {
         }
         let cachedPayload = await SearchCache(apiKey)
         let client_last_updated = Number(req.query.last_updated)
-        // What happens if there is no cache entry for the payload??
-        // Cache entry on the fly? 
-        if (cachedPayload?.last_updated === client_last_updated){
+        if (!cachedPayload){
+            let payload = await BuildCacheOnTheFly(req, apiKey)
+            return res.json(payload)
+        }
+        else if (cachedPayload.last_updated === client_last_updated){
             return CachedResourceValid(res)
         }
         else if (cachedPayload){
