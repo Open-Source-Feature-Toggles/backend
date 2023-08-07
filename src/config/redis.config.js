@@ -6,7 +6,6 @@ async function connect_redis () {
     try {
         client = redis.createClient({
             url : process.env.REDIS_URL, 
-            username : process.env.REDIS_USERNAME, 
             password : process.env.REDIS_PASSWORD, 
             socket: {
               reconnectStrategy: retries => { console.log(retries) ; return Math.min(retries * 50, 5000) } 
