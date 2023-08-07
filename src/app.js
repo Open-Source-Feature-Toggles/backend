@@ -14,10 +14,11 @@ function CreateApp () {
     
     
     // Express Middleware 
-    app.use(cors({
-        origin: 'http://henryjacobs.us',
-        credentials: true, 
-    }))
+    // app.use(cors({
+    //     origin: 'http://henryjacobs.us',
+    //     credentials: true, 
+    // }))
+    app.use(cors())
     app.use(morgan('dev'))
     app.use(express.json())
     app.use(express.urlencoded({ extended : true }))
