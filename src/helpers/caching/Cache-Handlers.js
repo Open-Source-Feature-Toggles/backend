@@ -119,7 +119,7 @@ async function BuildCacheOnTheFly (req, apiKey) {
             return await RebuildProdCache(req, null, null, getProject)
         }
         if (isDevelopmentKey(apiKey)){
-            return await RebuildProdCache(req, null, null, getProject)
+            return await RebuildDevCache(req, null, null, getProject)
         }
     } catch (error) {
         console.error(error)
