@@ -18,9 +18,16 @@ async function queryByApiKey (apiKey) {
     })
 }
 
+async function queryAllUserProjects (username) {
+    return Project.find({
+        owner: username, 
+    })
+}
+
 
 
 module.exports = { 
     projectQuery,  
-    queryByApiKey
+    queryByApiKey, 
+    queryAllUserProjects
 } 

@@ -50,12 +50,17 @@ function QueryProductionVariables ( list_of_variable_ids ) {
     })
 }
 
-
+function QueryVariablesByUser (username) {
+    return Variable.find({
+        owner : username
+    })
+}
 
 module.exports = {
     findVariableParentQuery, 
     findVariableQuery, 
     QueryVariablesById, 
     QueryDevelopmentVariables, 
-    QueryProductionVariables, 
+    QueryProductionVariables,
+    QueryVariablesByUser, 
 }

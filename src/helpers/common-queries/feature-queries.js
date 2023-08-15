@@ -30,8 +30,25 @@ function QueryDevelopmentFeatures (apiKey) {
     })
 }
 
+function QueryFeaturesByUser (username) {
+    return Feature.find({
+        owner: username
+    })
+}
+
+function QueryFeaturesByProject (projectName, username){
+    return Feature.find({
+        $and : [
+            { parentProjectName: projectName }, 
+            { owner: username }
+        ]
+    })
+}
+
 module.exports = { 
     FeatureExistsQuery, 
     QueryProductionFeatures, 
-    QueryDevelopmentFeatures, 
+    QueryDevelopmentFeatures,
+    QueryFeaturesByUser,  
+    QueryFeaturesByProject, 
 } 
