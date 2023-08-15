@@ -10,6 +10,7 @@ function CreateApp () {
     const variableRoutes = require('./routes/Admin-Web-App/administrative/variables')
     const authRoutes = require('./routes/Admin-Web-App/authRoutes')
     const apiRouter = require('./routes/api/api-router')
+    const appRouter = require('./routes/Admin-Web-App/appRouter')
     const app = express()
     
     
@@ -30,6 +31,7 @@ function CreateApp () {
     app.use("/variables", variableRoutes)
     app.use("/auth", authRoutes)
     app.use("/api", apiRouter)
+    app.use('/app', appRouter)
 
     return app
 }
