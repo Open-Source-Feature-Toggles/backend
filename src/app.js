@@ -19,7 +19,15 @@ function CreateApp () {
     //     origin: 'http://henryjacobs.us',
     //     credentials: true, 
     // }))
-    app.use(cors())
+    debugger
+    const acceptedOrigins = [
+        'http://localhost:3000', 
+        'http://localhost:5173'
+    ]
+    app.use(cors({
+        origin: acceptedOrigins, 
+        credentials : true, 
+    }))
     app.use(morgan('dev'))
     app.use(express.json())
     app.use(express.urlencoded({ extended : true }))

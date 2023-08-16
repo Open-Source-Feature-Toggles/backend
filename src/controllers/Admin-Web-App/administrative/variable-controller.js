@@ -2,7 +2,6 @@ const Variable = require('../../../models/api/variable')
 const { 
     ResourceNotFoundError, 
     NameAlreadyExistsError, 
-    BadRequest,  
 } = require('../../../helpers/common-error-messages')
 const { 
     MakeNewVariableValidation, 
