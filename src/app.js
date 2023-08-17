@@ -22,7 +22,8 @@ function CreateApp () {
     debugger
     const acceptedOrigins = [
         'http://localhost:3000', 
-        'http://localhost:5173'
+        'http://localhost:5173',
+        'https://feature-flagging-server-envproduction.up.railway.app',
     ]
     app.use(cors({
         origin: acceptedOrigins, 
