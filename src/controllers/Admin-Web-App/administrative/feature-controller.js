@@ -42,7 +42,7 @@ async function ChangeDevelopmentStatus (req, res, next) {
         }
         feature.developmentEnabled = !feature.developmentEnabled
         await feature.save()
-        res.status(200).json({ production_status : feature.developmentEnabled })
+        res.status(200).json({ development_status : feature.developmentEnabled })
         return next()
     } catch (error) {
         console.error(error)
