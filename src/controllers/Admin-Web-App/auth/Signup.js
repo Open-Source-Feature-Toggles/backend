@@ -24,7 +24,7 @@ async function SignUp (req, res) {
         let refreshToken = generateRefreshToken(newUser.username)
         newUser.refreshToken = refreshToken 
         await newUser.save()
-        res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true })
+        res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true, sameSite : 'None' })
         res.status(200).json({ accessToken })
     } catch (error){
         console.error(error)

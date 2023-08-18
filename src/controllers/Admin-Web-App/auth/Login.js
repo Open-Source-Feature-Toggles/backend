@@ -21,7 +21,7 @@ async function Login (req, res) {
         let refreshToken = generateRefreshToken(userExists.username)
         userExists.refreshToken = refreshToken
         await userExists.save()
-        res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true })
+        res.cookie('rjid', `${refreshToken}`, { maxAge: 604800000, httpOnly: true, secure: true, sameSite : 'None' })
         res.status(200).json({ accessToken })
     } catch (error) {
         console.error(error)
