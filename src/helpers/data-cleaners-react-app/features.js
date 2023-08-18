@@ -27,8 +27,10 @@ function removeSensitiveFeatureData (features) {
 
         let date = new Date(createdAt)
         date = `${date.getMonth() + 1}/${date.getDay()}/${date.getFullYear()}`
+        let entry_name = `${parentProjectName}_${name}`
+        
 
-        cleaned_data[name] = {
+        cleaned_data[entry_name] = {
             name, 
             variables : variables.length, 
             productionEnabled, 
@@ -36,7 +38,7 @@ function removeSensitiveFeatureData (features) {
             parentProjectName,
             createdAt : date,  
         }
-        cleaned_data['names'].push(name)
+        cleaned_data['names'].push(entry_name)
     }  
     return cleaned_data 
 }
