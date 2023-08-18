@@ -23,7 +23,7 @@ function CreateApp () {
     const acceptedOrigins = [
         'http://localhost:3000', 
         'http://localhost:5173',
-        'https://feature-flagging-server-envproduction.up.railway.app',
+        'https://opensourcefeaturetoggles.com',
     ]
     app.use(cors({
         origin: acceptedOrigins, 
