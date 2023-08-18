@@ -25,13 +25,16 @@ function removeSensitiveFeatureData (features) {
             createdAt, 
         } = feature
 
+        let date = new Date(createdAt)
+        date = `${date.getMonth() + 1}/${date.getDay()}/${date.getFullYear()}`
+
         cleaned_data[name] = {
             name, 
             variables : variables.length, 
             productionEnabled, 
             developmentEnabled, 
             parentProjectName,
-            createdAt,  
+            createdAt : date,  
         }
         cleaned_data['names'].push(name)
     }  
