@@ -4,6 +4,7 @@ const { QueryVariablesByUser } = require('../../../helpers/common-queries/variab
 const removeSensitiveProjectData = require('../../../helpers/data-cleaners-react-app/projects')
 const removeSensitiveFeatureData = require('../../../helpers/data-cleaners-react-app/features')
 const removeSensitiveVariableData = require('../../../helpers/data-cleaners-react-app/variables')
+const formatApiKeyData = require('../../../helpers/data-cleaners-react-app/apiKeys')
 
 async function getUserProjects (req, res) {
     try {
@@ -50,9 +51,22 @@ async function getVariables (req, res) {
     }
 } 
 
+async function getApiKeys (req, res) {
+    try {
+        let { user } = req
+        let userProjects = await queryAllUserProjects(user)
+        let cleanedData = formatApiKeyData(userProjects)
+        res.json(cleanedData)
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+    }
+}
+
 
 module.exports = { 
     getUserProjects, 
     getUserFeatures, 
     getVariables, 
+    getApiKeys, 
 } 
