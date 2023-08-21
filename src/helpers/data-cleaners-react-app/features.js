@@ -1,15 +1,4 @@
-/* 
-Needed data
-
-name
-number of variables
-parentProjectName
-developmentEnabled
-productionEnabled
-createdAt
-
-*/
-
+const prettyFormatDate = require('./prettyFormaters')
 
 function removeSensitiveFeatureData (features) {
     let cleaned_data = {}
@@ -24,21 +13,16 @@ function removeSensitiveFeatureData (features) {
             parentProjectName, 
             createdAt, 
         } = feature
-
-        let date = new Date(createdAt)
-        date = `${date.getMonth() + 1}/${date.getDay()}/${date.getFullYear()}`
-        let entry_name = `${parentProjectName}_${name}`
-        
-
-        cleaned_data[entry_name] = {
+        let uniqueEntryName = `${parentProjectName}_${name}`
+        cleaned_data[uniqueEntryName] = {
             name, 
             variables : variables.length, 
             productionEnabled, 
             developmentEnabled, 
             parentProjectName,
-            createdAt : date,  
+            createdAt : prettyFormatDate(createdAt), 
         }
-        cleaned_data['names'].push(entry_name)
+        cleaned_data['names'].push(uniqueEntryName)
     }  
     return cleaned_data 
 }
