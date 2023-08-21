@@ -10,6 +10,7 @@ function removeSensitiveVariableData (variables) {
             parentFeatureName, 
             developmentEnabled, 
             productionEnabled, 
+            parentProjectName, 
             updatedAt 
         } = variable
         let uniqueEntryName = `${parentFeatureName}_${name}` 
@@ -18,6 +19,7 @@ function removeSensitiveVariableData (variables) {
             parentFeatureName, 
             developmentEnabled, 
             productionEnabled, 
+            parentProjectName, 
             updatedAt : prettyFormatDate(updatedAt) 
         }
         cleanedData['names'].push(uniqueEntryName)
