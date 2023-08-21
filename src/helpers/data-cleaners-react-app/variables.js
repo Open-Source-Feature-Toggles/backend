@@ -4,6 +4,7 @@ function removeSensitiveVariableData (variables) {
     let cleanedData = {}
     cleanedData['numVariables'] = variables.length
     cleanedData['names'] = []
+    cleanedData['allVariableNames'] = []
     for (let variable of variables) {
         let {
             name, 
@@ -13,7 +14,7 @@ function removeSensitiveVariableData (variables) {
             parentProjectName, 
             updatedAt 
         } = variable
-        let uniqueEntryName = `${parentFeatureName}_${name}` 
+        let uniqueEntryName = `${name}_${parentFeatureName}` 
         cleanedData[uniqueEntryName] = {
             name, 
             parentFeatureName, 
@@ -23,6 +24,7 @@ function removeSensitiveVariableData (variables) {
             updatedAt : prettyFormatDate(updatedAt) 
         }
         cleanedData['names'].push(uniqueEntryName)
+        cleanedData['allVariableNames'].push(name)
     }
     return cleanedData
 }

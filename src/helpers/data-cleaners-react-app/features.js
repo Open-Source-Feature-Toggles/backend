@@ -4,6 +4,7 @@ function removeSensitiveFeatureData (features) {
     let cleaned_data = {}
     cleaned_data['numFeatures'] = features.length
     cleaned_data['names'] = []
+    cleaned_data['allFeatureNames'] = []
     for (let feature of features){
         let {
             name, 
@@ -13,7 +14,7 @@ function removeSensitiveFeatureData (features) {
             parentProjectName, 
             createdAt, 
         } = feature
-        let uniqueEntryName = `${parentProjectName}_${name}`
+        let uniqueEntryName = `${name}_${parentProjectName}`
         cleaned_data[uniqueEntryName] = {
             name, 
             variables : variables.length, 
@@ -23,6 +24,7 @@ function removeSensitiveFeatureData (features) {
             createdAt : prettyFormatDate(createdAt), 
         }
         cleaned_data['names'].push(uniqueEntryName)
+        cleaned_data['allFeatureNames'].push(name)
     }  
     return cleaned_data 
 }
