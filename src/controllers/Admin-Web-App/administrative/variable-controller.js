@@ -39,6 +39,7 @@ async function MakeNewVariable (req, res, next) {
             created : new Date(), 
             parentFeatureName : findParentFeature.name,
             parentFeatureID : findParentFeature._id,  
+            parentProjectName : findParentFeature.parentProjectName, 
         })
         findParentFeature.variables.push(newVariable._id)
         await Promise.all([
