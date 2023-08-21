@@ -103,6 +103,7 @@ async function MakeNewFeature (req, res, next) {
             active: false, 
             owner : req.user, 
             created : new Date(), 
+            parentProjectName: getProject.name, 
         })
         let newFeature = new Feature({
             name: featureName, 
