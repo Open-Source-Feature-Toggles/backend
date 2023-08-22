@@ -12,6 +12,7 @@ function cleanHomePageData (projectName, features, variables) {
             description, 
             developmentEnabled, 
             productionEnabled,
+            parentProjectName, 
             createdAt, 
         } = feature
         let featureEntry = cleanedData["features"][`${feature.name}`] = {
@@ -19,6 +20,7 @@ function cleanHomePageData (projectName, features, variables) {
             description, 
             developmentEnabled, 
             productionEnabled, 
+            parentProjectName, 
             createdAt, 
         }
         cleanedData["featureNames"].push(name)
