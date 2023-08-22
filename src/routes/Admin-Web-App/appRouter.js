@@ -5,6 +5,7 @@ const {
     getUserFeatures, 
     getVariables,
     getApiKeys, 
+    getHomePageData, 
 } = require('../../controllers/Admin-Web-App/appQueries/projects')
 const { ProtectAuthRoutes } = require('../../middlewares/auth')
 
@@ -15,5 +16,7 @@ router.get('/features', ProtectAuthRoutes, getUserFeatures)
 router.get('/variables', ProtectAuthRoutes, getVariables)
 
 router.get('/api-keys', ProtectAuthRoutes, getApiKeys)
+
+router.get('/home', ProtectAuthRoutes, getHomePageData)
 
 module.exports = router 
