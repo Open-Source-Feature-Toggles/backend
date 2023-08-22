@@ -56,6 +56,23 @@ function QueryVariablesByUser (username) {
     })
 }
 
+function QueryVariablesByProject (username, projectName) {
+    return Variable.find({
+        $and : [
+            { owner: username }, 
+            { parentProjectName : projectName }
+        ]
+    })
+}
+
+function QueryMostRecentlyUpdatedVariable (username) {
+    return Variable.findOne({
+        owner: username, 
+    }).sort({
+        updatedAt : -1
+    })
+}
+
 module.exports = {
     findVariableParentQuery, 
     findVariableQuery, 
@@ -63,4 +80,6 @@ module.exports = {
     QueryDevelopmentVariables, 
     QueryProductionVariables,
     QueryVariablesByUser, 
+    QueryVariablesByProject,
+    QueryMostRecentlyUpdatedVariable,  
 }
