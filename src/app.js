@@ -15,13 +15,7 @@ function CreateApp () {
     
     
     // Express Middleware 
-    // app.use(cors({
-    //     origin: 'http://henryjacobs.us',
-    //     credentials: true, 
-    // }))
-    debugger
-    const acceptedOrigins = [
-        'http://localhost:3000', 
+    const acceptedOrigins = [ 
         'http://localhost:5173',
         'https://opensourcefeaturetoggles.com',
     ]
