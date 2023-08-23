@@ -23,7 +23,7 @@ async function MakeNewProject (req, res) {
             developmentApiKey, 
         })
         await newProject.save()
-        res.sendStatus(200)
+        res.status(200).json({ success : true })
     } catch (error){
         console.error(error)
         res.sendStatus(500)
@@ -43,7 +43,7 @@ async function DeleteProject (req, res, next) {
             Feature.deleteMany({ parentProjectID : project._id }),
             Project.findByIdAndDelete(project._id),
         ])
-        res.sendStatus(200)
+        res.status(200).json({ success : true })
         req.productionApiKey = project.productionApiKey
         req.developmentApiKey = project.developmentApiKey
         return next()
