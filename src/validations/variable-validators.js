@@ -6,11 +6,6 @@ const MakeNewVariableValidator = [
         .trim()
         .notEmpty().withMessage("Missing Variable Name")
         .escape(), 
-    body("active")
-        .trim()
-        .notEmpty().withMessage("Missing Variable Status")
-        .isBoolean()
-        .escape(), 
     body("parentFeature")
         .trim()
         .notEmpty().withMessage("Missing Parent Feature Name")
