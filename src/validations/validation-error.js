@@ -3,7 +3,10 @@ const { validationResult } = require('express-validator')
 function ValidationError (req, res, next) {
     const errors = validationResult(req)
     if (!errors.isEmpty()){
-        return res.status(400).json({ errors : errors.array() })
+        let messages = errors.array().map( (error) => {
+            return error.msg
+        })
+        return res.status(400).json({ errors : messages })
     }
     next()
 }
