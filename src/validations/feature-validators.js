@@ -28,10 +28,6 @@ const Make_New_Feature_Validator = [
         .trim()
         .notEmpty().withMessage("Missing Project Name")
         .escape(), 
-    body("featureVariableName")
-        .trim()
-        .notEmpty().withMessage("Missing Feature Variable's Name")
-        .escape(),
 ]
 
 
