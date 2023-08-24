@@ -12,7 +12,10 @@ const {
     QueryMostRecentlyUpdatedVariable, 
 } = require('../../../helpers/common-queries/variable-queries')
 const removeSensitiveProjectData = require('../../../helpers/data-cleaners-react-app/projects')
-const removeSensitiveFeatureData = require('../../../helpers/data-cleaners-react-app/features')
+const { 
+    removeSensitiveFeatureData, 
+    returnFeatureNames,  
+} = require('../../../helpers/data-cleaners-react-app/features')
 const removeSensitiveVariableData = require('../../../helpers/data-cleaners-react-app/variables')
 const cleanHomePageData = require('../../../helpers/data-cleaners-react-app/home')
 const formatApiKeyData = require('../../../helpers/data-cleaners-react-app/apiKeys')
@@ -100,6 +103,19 @@ async function getHomePageData (req, res) {
     }
 }
 
+async function GetFeaturesByProjectName (req, res) {
+    try {
+        let { user } = req 
+        let projectName = req.query.project_name
+        let features = await QueryFeaturesByProject(projectName, user)
+        let getNames = returnFeatureNames(features)
+        res.json(getNames)
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+    }
+}
+
 
 module.exports = { 
     getUserProjects, 
@@ -107,4 +123,5 @@ module.exports = {
     getVariables, 
     getApiKeys, 
     getHomePageData, 
+    GetFeaturesByProjectName,
 } 

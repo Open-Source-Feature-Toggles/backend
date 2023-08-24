@@ -29,4 +29,15 @@ function removeSensitiveFeatureData (features) {
     return cleaned_data 
 }
 
-module.exports = removeSensitiveFeatureData
+function returnFeatureNames (features) {
+    let names = []
+    for (let feature of features) {
+        names.push(feature.name)
+    }
+    return { names }
+}
+
+module.exports = { 
+    removeSensitiveFeatureData, 
+    returnFeatureNames, 
+}
