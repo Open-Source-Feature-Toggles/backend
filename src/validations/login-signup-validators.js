@@ -5,11 +5,9 @@ const { PasswordConfirmPasswordError } = require('../helpers/common-error-messag
 const LoginValidator = [
     body("username")
         .trim()
-        .isLength({ min : 8 }).withMessage("Username must be 8 characters long")
         .escape(),
     body("password")
         .trim()
-        .isLength({ min : 8 }).withMessage("Password must be 8 characters long"), 
 ]
 
 const SignupValidator = [
