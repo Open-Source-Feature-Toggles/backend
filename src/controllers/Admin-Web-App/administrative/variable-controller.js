@@ -18,7 +18,6 @@ async function MakeNewVariable (req, res, next) {
     try {
         let {
             name, 
-            active, 
             parentFeature, 
             projectName, 
         } = req.body
@@ -34,7 +33,7 @@ async function MakeNewVariable (req, res, next) {
         }
         let newVariable = new Variable({
             name, 
-            active, 
+            active : false, 
             owner : req.user, 
             created : new Date(), 
             parentFeatureName : findParentFeature.name,
@@ -46,7 +45,7 @@ async function MakeNewVariable (req, res, next) {
             newVariable.save(), 
             findParentFeature.save()
         ])             
-        res.sendStatus(200)
+        res.status(200).json({ success : true })
         return next()
     } catch (error) {
         console.error(error)
@@ -79,7 +78,7 @@ async function DeleteVariable (req, res, next) {
             findParentFeature.save(), 
             Variable.findByIdAndDelete(checkIfVariableExists._id)
         ])
-        res.sendStatus(200)
+        res.status(200).json({ success : true })
         return next()
     } catch (error) {
         console.error(error)

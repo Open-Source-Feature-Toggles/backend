@@ -71,7 +71,7 @@ async function DeleteFeature (req, res, next) {
             Variable.deleteMany({ _id: { $in: feature.variables } }), 
             Feature.findByIdAndDelete(feature._id), 
         ])
-        res.sendStatus(200)
+        res.status(200).json({ success : true })
         return next()
     } catch (error) {
         console.error(error)
@@ -127,7 +127,7 @@ async function MakeNewFeature (req, res, next) {
             newVariable.save(), 
             newFeature.save(), 
         ])
-        res.sendStatus(200)
+        res.status(200).json({ success: true })
         return next()
     } catch (error) {
         console.error(error)
