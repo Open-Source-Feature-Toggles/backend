@@ -21,6 +21,7 @@ async function Login (req, res) {
         } 
         let refreshToken
         try {
+            if (userExists.refreshToken === undefined){ throw new Error('No JWT') }
             verifyToken(userExists.refreshToken, REFRESH_SECRET)
             refreshToken = userExists.refreshToken
         } catch (error) {
