@@ -15,12 +15,12 @@ function CreateApp () {
     
     
     // Express Middleware 
-    const acceptedOrigins = [ 
-        'http://localhost:5173',
-        'https://opensourcefeaturetoggles.com',
-    ]
+    // const acceptedOrigins = [ 
+    //     'http://localhost:5173',
+    //     'https://opensourcefeaturetoggles.com',
+    // ]
     app.use(cors({
-        origin: acceptedOrigins, 
+        origin: true, 
         credentials : true, 
     }))
     app.use(morgan('dev'))
