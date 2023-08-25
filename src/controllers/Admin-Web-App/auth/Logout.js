@@ -8,7 +8,7 @@ async function LogoutUser (req, res) {
         }
         let user = req.userObject
         await user.updateOne({ $unset : { refreshToken : 1 } }).exec()
-        res.sendStatus(200)
+        res.status(200).json({ success: true })
     } catch (error) {
         console.error(error)
         res.sendStatus(500)

@@ -11,7 +11,7 @@ async function Login (req, res) {
         let { username, password } = req.body
         let userExists = await User.findOne({ username }).exec()
         if (!userExists) { 
-            return ResourceNotFoundError(res, "User")
+            return ResourceNotFoundError(res, "Username")
         }
         let validPassword = await compare(password, userExists.password)
         if (!validPassword) {
