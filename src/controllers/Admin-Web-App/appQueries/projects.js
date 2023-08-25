@@ -1,10 +1,12 @@
 const {
     projectQuery, 
-    queryAllUserProjects 
+    queryAllUserProjects, 
+    queryMostRecentlyUpdatedProject, 
 } = require('../../../helpers/common-queries/project-queries')
 const { 
     QueryFeaturesByProject, 
-    QueryFeaturesByUser 
+    QueryFeaturesByUser, 
+    QueryMostRecentlyUpdatedFeature, 
 } = require('../../../helpers/common-queries/feature-queries')
 const { 
     QueryVariablesByProject, 
@@ -19,6 +21,7 @@ const {
 const removeSensitiveVariableData = require('../../../helpers/data-cleaners-react-app/variables')
 const cleanHomePageData = require('../../../helpers/data-cleaners-react-app/home')
 const formatApiKeyData = require('../../../helpers/data-cleaners-react-app/apiKeys')
+const returnMostRecentlyUpdated = require('../../../helpers/data-cleaners-react-app/compareDates')
 
 async function getUserProjects (req, res) {
     try {
@@ -86,7 +89,19 @@ async function getHomePageData (req, res) {
             // by the user and then use that as the default landing page
             // could also grab the feature with the most recent update and then use 
             // whichever one is newest 
-            projectName = (await QueryMostRecentlyUpdatedVariable(user)).parentProjectName
+            let [
+                project, 
+                feature, 
+                variable
+            ] = await Promise.all([
+                queryMostRecentlyUpdatedProject(user), 
+                QueryMostRecentlyUpdatedFeature(user), 
+                QueryMostRecentlyUpdatedVariable(user), 
+            ])
+            projectName = returnMostRecentlyUpdated(project, feature, variable)
+            if (!projectName){
+                return res.status(200).json({ noProjects : true })
+            }
         }
         let [ 
             features,   

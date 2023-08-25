@@ -45,10 +45,19 @@ function QueryFeaturesByProject (projectName, username){
     })
 }
 
+function QueryMostRecentlyUpdatedFeature (username) {
+    return Feature.findOne({
+        owner: username
+    }).sort({
+        updatedAt: -1
+    })
+}
+
 module.exports = { 
     FeatureExistsQuery, 
     QueryProductionFeatures, 
     QueryDevelopmentFeatures,
     QueryFeaturesByUser,  
     QueryFeaturesByProject, 
+    QueryMostRecentlyUpdatedFeature, 
 } 

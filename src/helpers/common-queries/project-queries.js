@@ -24,10 +24,18 @@ async function queryAllUserProjects (username) {
     })
 }
 
+async function queryMostRecentlyUpdatedProject (username) {
+    return Project.findOne({
+        owner: username
+    }).sort({
+        updatedAt: -1 
+    })
+}
 
 
 module.exports = { 
     projectQuery,  
     queryByApiKey, 
-    queryAllUserProjects
+    queryAllUserProjects, 
+    queryMostRecentlyUpdatedProject, 
 } 
