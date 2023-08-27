@@ -1,14 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const { 
-    getUserProjects, 
-    getUserFeatures, 
-    getVariables,
-    getApiKeys, 
-    getHomePageData,
-    GetFeaturesByProjectName 
-} = require('../../controllers/Admin-Web-App/appQueries/projects')
 const { ProtectAuthRoutes } = require('../../middlewares/auth')
+const { getUserProjects } = require('../../controllers/Admin-Web-App/appQueries/projects')
+const {
+    getUserFeatures,
+    GetFeaturesByProjectName
+} = require('../../controllers/Admin-Web-App/appQueries/features')
+const { getVariables } = require('../../controllers/Admin-Web-App/appQueries/variables')
+const { getApiKeys } = require('../../controllers/Admin-Web-App/appQueries/api-keys')
+const { getHomePageData } = require('../../controllers/Admin-Web-App/appQueries/homepage')
 
 
 router.get('/projects', ProtectAuthRoutes, getUserProjects)

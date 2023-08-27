@@ -1,4 +1,4 @@
-const prettyFormatDate = require('./prettyFormaters')
+const prettyFormatDate = require('../../../../helpers/app-queries-helpers/prettyFormaters')
 
 function removeSensitiveVariableData (variables) {
     let cleanedData = {}
@@ -29,4 +29,6 @@ function removeSensitiveVariableData (variables) {
     return cleanedData
 }
 
-module.exports = removeSensitiveVariableData
+module.exports = {
+    removeSensitiveVariableData
+}

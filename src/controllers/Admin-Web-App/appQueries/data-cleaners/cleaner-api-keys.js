@@ -19,5 +19,6 @@ function formatApiKeyData (projects) {
     return cleanedData
 }
 
-
-module.exports = formatApiKeyData
+module.exports = {
+    formatApiKeyData
+}

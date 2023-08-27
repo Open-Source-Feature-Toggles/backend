@@ -1,4 +1,4 @@
-const prettyFormatDate = require('./prettyFormaters')
+const prettyFormatDate = require('../../../../helpers/app-queries-helpers/prettyFormaters')
 
 function removeSensitiveFeatureData (features) {
     let cleaned_data = {}
@@ -37,7 +37,7 @@ function returnFeatureNames (features) {
     return { names }
 }
 
-module.exports = { 
+module.exports = {
     removeSensitiveFeatureData, 
     returnFeatureNames, 
 }

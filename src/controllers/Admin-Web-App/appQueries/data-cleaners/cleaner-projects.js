@@ -53,5 +53,6 @@ function removeSensitiveProjectData (projects, features, variables) {
     return new_data
 }
 
-
-module.exports = removeSensitiveProjectData
+module.exports = {
+    removeSensitiveProjectData, 
+}
