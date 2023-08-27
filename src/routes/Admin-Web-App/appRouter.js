@@ -3,7 +3,6 @@ const router = express.Router()
 const { ProtectAuthRoutes } = require('../../middlewares/auth')
 const { 
     getUserProjects, 
-    getApiKeys, 
     getHomePageData,
 } = require('../../controllers/Admin-Web-App/appQueries/projects')
 const {
@@ -11,7 +10,7 @@ const {
     GetFeaturesByProjectName
 } = require('../../controllers/Admin-Web-App/appQueries/features')
 const { getVariables } = require('../../controllers/Admin-Web-App/appQueries/variables')
-
+const { getApiKeys } = require('../../controllers/Admin-Web-App/appQueries/api-keys')
 
 
 router.get('/projects', ProtectAuthRoutes, getUserProjects)

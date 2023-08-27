@@ -1,3 +1,5 @@
+const { queryAllUserProjects } = require('../../../helpers/common-queries/project-queries')
+
 function formatApiKeyData (projects) {
     let cleanedData = {}
     cleanedData['numProjects'] = projects.length
@@ -19,5 +21,18 @@ function formatApiKeyData (projects) {
     return cleanedData
 }
 
+async function getApiKeys (req, res) {
+    try {
+        let { user } = req
+        let userProjects = await queryAllUserProjects(user)
+        let cleanedData = formatApiKeyData(userProjects)
+        res.json(cleanedData)
+    } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+    }
+}
 
-module.exports = formatApiKeyData
+module.exports = {
+    getApiKeys, 
+}
