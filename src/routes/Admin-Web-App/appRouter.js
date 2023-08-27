@@ -1,9 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { ProtectAuthRoutes } = require('../../middlewares/auth')
-const { 
-    getUserProjects, 
-} = require('../../controllers/Admin-Web-App/appQueries/projects')
+const { getUserProjects } = require('../../controllers/Admin-Web-App/appQueries/projects')
 const {
     getUserFeatures,
     GetFeaturesByProjectName
