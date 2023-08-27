@@ -1,6 +1,6 @@
 const { QueryFeaturesByUser } = require('../../../helpers/common-queries/feature-queries')
 const { QueryFeaturesByProject } = require('../../../helpers/common-queries/feature-queries')
-const prettyFormatDate = require('../../../helpers/data-cleaners-react-app/prettyFormaters')
+const prettyFormatDate = require('../../../helpers/app-queries-helpers/prettyFormaters')
 
 function removeSensitiveFeatureData (features) {
     let cleaned_data = {}

@@ -1,6 +1,6 @@
 
 const { QueryVariablesByUser } = require('../../../helpers/common-queries/variable-queries')
-const prettyFormatDate = require('../../../helpers/data-cleaners-react-app/prettyFormaters')
+const prettyFormatDate = require('../../../helpers/app-queries-helpers/prettyFormaters')
 
 function removeSensitiveVariableData (variables) {
     let cleanedData = {}
