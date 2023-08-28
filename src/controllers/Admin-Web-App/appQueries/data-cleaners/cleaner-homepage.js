@@ -39,6 +39,7 @@ function cleanHomePageData (projectName, features, variables) {
             }
         }
     }
+    cleanedData['featureNames'].sort()
     return cleanedData
 }
 

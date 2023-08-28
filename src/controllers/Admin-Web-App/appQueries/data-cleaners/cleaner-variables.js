@@ -26,6 +26,7 @@ function removeSensitiveVariableData (variables) {
         cleanedData['names'].push(uniqueEntryName)
         cleanedData['allVariableNames'].push(name)
     }
+    cleanedData['names'].sort()
     return cleanedData
 }
 

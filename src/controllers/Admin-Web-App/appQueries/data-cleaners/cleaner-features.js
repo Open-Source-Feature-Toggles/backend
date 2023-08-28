@@ -26,6 +26,7 @@ function removeSensitiveFeatureData (features) {
         cleaned_data['names'].push(uniqueEntryName)
         cleaned_data['allFeatureNames'].push(name)
     }  
+    cleaned_data['names'].sort()
     return cleaned_data 
 }
 
