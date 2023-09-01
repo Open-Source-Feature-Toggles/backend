@@ -7,9 +7,11 @@ OSFT stands for 'Open Source Feature Toggles'. It is a small feature flagging se
 <br/>
 <br/>
 <div align="center">
-  <img src="https://hjacobs-rest-api-production.up.railway.app/osft/720-gif" alt="osft-demo"/>
+  <img src="https://hjacobs-rest-api-production.up.railway.app/osft/1440-gif" alt="osft-demo"/>
 </div>
-<br/>
+
+#### [Click here if you would like to see the full video of this example](https://hjacobs-rest-api-production.up.railway.app/osft/raw-video-example)  
+
 
 #### Built With
 
