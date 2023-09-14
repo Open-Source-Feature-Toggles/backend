@@ -34,3 +34,5 @@ refresh-token-jwt
 !.env.vault
 
 /dump.rdb
+
+coverage

@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=testing jest --runInBand",
-    "dev": "cross-env NODE_ENV=development nodemon ./src/server.js", 
-    "debug": "cross-env NODE_ENV=development nodemon --inspect ./src/server.js", 
-    "start" : "cross-env NODE_ENV=production nodemon ./src/server.js"
+    "test": "cross-env NODE_ENV=testing jest --runInBand --coverage",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/server.js",
+    "debug": "cross-env NODE_ENV=development nodemon --inspect ./src/server.js",
+    "start": "cross-env NODE_ENV=production nodemon ./src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +30,7 @@
     "mongodb-memory-server": "^8.13.0",
     "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
-  }, 
+  },
   "jest": {
     "testRegex": "\\.test\\.js$"
   }
