@@ -108,7 +108,7 @@ async function BuildPayloadOnTheFly (apiKey) {
     }
 }
 
-async function BuildCacheOnTheFly (req, apiKey) {
+async function BuildCacheOnTheFly (req, res, apiKey) {
     try {
         if (!isCacheConnected){ return }
         let getProject = await queryByApiKey(apiKey)

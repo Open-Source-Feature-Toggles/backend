@@ -41,7 +41,7 @@ async function GetPayload (req, res) {
         let cachedPayload = await SearchCache(apiKey)
         let client_last_updated = Number(req.query.last_updated)
         if (!cachedPayload){
-            let payload = await BuildCacheOnTheFly(req, apiKey)
+            let payload = await BuildCacheOnTheFly(req, res, apiKey)
             return res.json(payload)
         }
         else if (cachedPayload.last_updated === client_last_updated){
