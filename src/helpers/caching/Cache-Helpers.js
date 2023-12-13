@@ -8,7 +8,7 @@ function buildPayload (variables, status, projectName) {
     let payload = {
         'features' : {}, 
         'last_updated' : Date.now(), 
-        'projectName' : projectName, 
+        'name' : projectName, 
     }
     variables.forEach( variable => {
         let { parentFeatureName, name } = variable

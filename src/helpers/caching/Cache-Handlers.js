@@ -117,6 +117,7 @@ async function BuildCacheOnTheFly (req, res, apiKey) {
         if (!getProject){
             return BadApiKeyError(res)
         }
+        console.log('Project:', getProject.name)
         if (isProductionKey(apiKey)){
             return await RebuildProdCache(req, null, null, getProject)
         }
