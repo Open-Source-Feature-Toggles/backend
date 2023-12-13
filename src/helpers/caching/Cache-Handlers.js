@@ -44,7 +44,7 @@ async function buildProjectPayload (project, QueryFeaturesFunction, apiKey, enab
     let features = await QueryFeaturesFunction(project[apiKey])
     let variables = extractVariables(features)
     variables = await QueryVariablesById(variables)
-    return buildPayload(variables, enabledType) 
+    return buildPayload(variables, enabledType, project.name) 
 }
 
 async function RebuildCache (req, QueryFeaturesFunction, apiKey, enabledType, passedProject, cacheType) {
@@ -94,8 +94,10 @@ async function BuildPayloadOnTheFly (apiKey) {
     try {
         let getProject = await queryByApiKey(apiKey)
         if (!getProject){
+            console.log('No project name found')
             return null
         }
+        console.log('Project:', getProject.name)
         if (isProductionKey(apiKey)){
             return buildProjectPayload(getProject, QueryProductionFeatures, apiKey, PROD)
         }
