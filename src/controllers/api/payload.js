@@ -45,9 +45,11 @@ async function GetPayload (req, res) {
             if (!payload){ return res.json(payload) }
         }
         else if (cachedPayload.last_updated === client_last_updated){
+            console.log('Project:', cachedPayload.name)
             return CachedResourceValid(res)
         }
         else if (cachedPayload){
+            console.log('Project:', cachedPayload.name)
             return res.json(cachedPayload)
         }
     } catch (error) {

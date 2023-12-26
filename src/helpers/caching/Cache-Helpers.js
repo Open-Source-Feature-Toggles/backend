@@ -4,10 +4,11 @@ function extractVariables (features) {
     return features.flatMap( feature => { return feature.variables })
 }
 
-function buildPayload (variables, status) {
+function buildPayload (variables, status, projectName) {
     let payload = {
         'features' : {}, 
         'last_updated' : Date.now(), 
+        'name' : projectName, 
     }
     variables.forEach( variable => {
         let { parentFeatureName, name } = variable
