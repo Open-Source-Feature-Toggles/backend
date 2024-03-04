@@ -1,11 +1,7 @@
-function CachedResourceValid (res) {
-    return res.sendStatus(304)
+function CachedResourceValid(res) {
+  return res.sendStatus(304);
 }
-
-
-
-
 
 module.exports = {
-    CachedResourceValid, 
-}
+  CachedResourceValid,
+};

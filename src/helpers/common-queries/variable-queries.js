@@ -1,85 +1,72 @@
-const Variable = require('../../models/api/variable')
-const Feature = require('../../models/api/feature')
+const Variable = require('../../models/api/variable');
+const Feature = require('../../models/api/feature');
 
-function findVariableParentQuery (name, owner, parentProject) {
-    return Feature.findOne({
-        $and : [
-            { $and : [
-                { name }, 
-                { owner }
-            ]}, 
-            { parentProjectName : parentProject }
-        ]
-    })
-} 
-
-function findVariableQuery ( name, owner, parentFeature ) {
-    return Variable.findOne({
-        $and : [
-            { $and : [
-                { name }, 
-                { parentFeatureName: parentFeature }
-            ]}, 
-            { owner }
-        ]
-    })
+function findVariableParentQuery(name, owner, parentProject) {
+  return Feature.findOne({
+    $and: [
+      { $and: [{ name }, { owner }] },
+      { parentProjectName: parentProject },
+    ],
+  });
 }
 
-function QueryVariablesById ( list_of_variable_ids ) {
-    return Variable.find({
-        _id : { $in : list_of_variable_ids }
-    })
+function findVariableQuery(name, owner, parentFeature) {
+  return Variable.findOne({
+    $and: [
+      { $and: [{ name }, { parentFeatureName: parentFeature }] },
+      { owner },
+    ],
+  });
 }
 
-
-function QueryDevelopmentVariables ( list_of_variable_ids ) {
-    return Variable.find({
-        $and : [
-            { _id : { $in : list_of_variable_ids }}, 
-            { developmentEnabled : true }, 
-        ]
-    })
+function QueryVariablesById(list_of_variable_ids) {
+  return Variable.find({
+    _id: { $in: list_of_variable_ids },
+  });
 }
 
-function QueryProductionVariables ( list_of_variable_ids ) {
-    return Variable.find({
-        $and : [
-            { _id : { $in : list_of_variable_ids }}, 
-            { productionEnabled : true }, 
-        ]
-    })
+function QueryDevelopmentVariables(list_of_variable_ids) {
+  return Variable.find({
+    $and: [
+      { _id: { $in: list_of_variable_ids } },
+      { developmentEnabled: true },
+    ],
+  });
 }
 
-function QueryVariablesByUser (username) {
-    return Variable.find({
-        owner : username
-    })
+function QueryProductionVariables(list_of_variable_ids) {
+  return Variable.find({
+    $and: [{ _id: { $in: list_of_variable_ids } }, { productionEnabled: true }],
+  });
 }
 
-function QueryVariablesByProject (username, projectName) {
-    return Variable.find({
-        $and : [
-            { owner: username }, 
-            { parentProjectName : projectName }
-        ]
-    })
+function QueryVariablesByUser(username) {
+  return Variable.find({
+    owner: username,
+  });
 }
 
-function QueryMostRecentlyUpdatedVariable (username) {
-    return Variable.findOne({
-        owner: username, 
-    }).sort({
-        updatedAt : -1
-    })
+function QueryVariablesByProject(username, projectName) {
+  return Variable.find({
+    $and: [{ owner: username }, { parentProjectName: projectName }],
+  });
+}
+
+function QueryMostRecentlyUpdatedVariable(username) {
+  return Variable.findOne({
+    owner: username,
+  }).sort({
+    updatedAt: -1,
+  });
 }
 
 module.exports = {
-    findVariableParentQuery, 
-    findVariableQuery, 
-    QueryVariablesById, 
-    QueryDevelopmentVariables, 
-    QueryProductionVariables,
-    QueryVariablesByUser, 
-    QueryVariablesByProject,
-    QueryMostRecentlyUpdatedVariable,  
-}
+  findVariableParentQuery,
+  findVariableQuery,
+  QueryVariablesById,
+  QueryDevelopmentVariables,
+  QueryProductionVariables,
+  QueryVariablesByUser,
+  QueryVariablesByProject,
+  QueryMostRecentlyUpdatedVariable,
+};

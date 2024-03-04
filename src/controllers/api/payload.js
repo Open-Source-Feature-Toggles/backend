@@ -1,9 +1,14 @@
-const { BadApiKeyError } = require('../../helpers/common-error-messages')
-const { getApiHeaders } = require('../../helpers/Api-Key-Helpers')
-const { SearchCache } = require('../../helpers/caching/Redis-Helpers')
-const { CachedResourceValid } = require('../../helpers/http-responses/Success-Messages')
-const { BuildPayloadOnTheFly, BuildCacheOnTheFly } = require('../../helpers/caching/Cache-Handlers')
-const { isCacheConnected } = require('../../config/redis.config')
+const { BadApiKeyError } = require('../../helpers/common-error-messages');
+const { getApiHeaders } = require('../../helpers/Api-Key-Helpers');
+const { SearchCache } = require('../../helpers/caching/Redis-Helpers');
+const {
+  CachedResourceValid,
+} = require('../../helpers/http-responses/Success-Messages');
+const {
+  BuildPayloadOnTheFly,
+  BuildCacheOnTheFly,
+} = require('../../helpers/caching/Cache-Handlers');
+const { isCacheConnected } = require('../../config/redis.config');
 /* 
 
 GetPayload 
@@ -26,42 +31,39 @@ GetPayload
 */
 
 async function GetPayload(req, res) {
-    try {
-        let apiKey = getApiHeaders(req)
-        if (!apiKey) {
-            return BadApiKeyError(res)
-        }
-        if (!isCacheConnected()) {
-            let payload = await BuildPayloadOnTheFly(apiKey)
-            if (!payload) {
-                return BadApiKeyError(res)
-            }
-            return res.json(payload)
-        }
-        let cachedPayload = await SearchCache(apiKey)
-        let client_last_updated = Number(req.query.last_updated)
-        if (!cachedPayload) {
-            let payload = await BuildCacheOnTheFly(req, res, apiKey)
-            if (payload?.features) { return res.json(payload) }
-            throw new Error('Cached item failed to propagate')
-        }
-        else if (cachedPayload.last_updated === client_last_updated) {
-            console.log('Project:', cachedPayload.name)
-            return CachedResourceValid(res)
-        }
-        else if (cachedPayload) {
-            console.log('Project:', cachedPayload.name)
-            return res.json(cachedPayload)
-        }
-    } catch (error) {
-        res.status(500)
-        console.error(error)
+  try {
+    let apiKey = getApiHeaders(req);
+    if (!apiKey) {
+      return BadApiKeyError(res);
     }
+    if (!isCacheConnected()) {
+      let payload = await BuildPayloadOnTheFly(apiKey);
+      if (!payload) {
+        return BadApiKeyError(res);
+      }
+      return res.json(payload);
+    }
+    let cachedPayload = await SearchCache(apiKey);
+    let client_last_updated = Number(req.query.last_updated);
+    if (!cachedPayload) {
+      let payload = await BuildCacheOnTheFly(req, res, apiKey);
+      if (payload?.features) {
+        return res.json(payload);
+      }
+      throw new Error('Cached item failed to propagate');
+    } else if (cachedPayload.last_updated === client_last_updated) {
+      console.log('Project:', cachedPayload.name);
+      return CachedResourceValid(res);
+    } else if (cachedPayload) {
+      console.log('Project:', cachedPayload.name);
+      return res.json(cachedPayload);
+    }
+  } catch (error) {
+    res.status(500);
+    console.error(error);
+  }
 }
-
 
 module.exports = {
-    GetPayload,
-}
-
-
+  GetPayload,
+};

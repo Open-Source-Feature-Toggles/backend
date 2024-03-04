@@ -1,15 +1,12 @@
-const { body } = require('express-validator')
-const ValidationError = require('./validation-error')
+const { body } = require('express-validator');
+const ValidationError = require('./validation-error');
 
 const NameValidator = [
-    body("projectName")
+  body('projectName')
     .trim()
-    .notEmpty().withMessage("Missing Project Name")
-    .escape()
-]
+    .notEmpty()
+    .withMessage('Missing Project Name')
+    .escape(),
+];
 
-
-exports.projectValidation = [
-    NameValidator, 
-    ValidationError, 
-]
+exports.projectValidation = [NameValidator, ValidationError];
