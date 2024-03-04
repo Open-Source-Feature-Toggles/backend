@@ -25,7 +25,7 @@ GetPayload
 
 */
 
-async function GetPayload (req, res) {
+async function GetPayload(req, res) {
     try {
         let apiKey = getApiHeaders(req)
         if (!apiKey) {
@@ -40,15 +40,16 @@ async function GetPayload (req, res) {
         }
         let cachedPayload = await SearchCache(apiKey)
         let client_last_updated = Number(req.query.last_updated)
-        if (!cachedPayload){
+        if (!cachedPayload) {
             let payload = await BuildCacheOnTheFly(req, res, apiKey)
-            if (!payload){ return res.json(payload) }
+            if (payload?.features) { return res.json(payload) }
+            throw new Error('Cached item failed to propagate')
         }
-        else if (cachedPayload.last_updated === client_last_updated){
+        else if (cachedPayload.last_updated === client_last_updated) {
             console.log('Project:', cachedPayload.name)
             return CachedResourceValid(res)
         }
-        else if (cachedPayload){
+        else if (cachedPayload) {
             console.log('Project:', cachedPayload.name)
             return res.json(cachedPayload)
         }
@@ -60,7 +61,7 @@ async function GetPayload (req, res) {
 
 
 module.exports = {
-    GetPayload, 
+    GetPayload,
 }
 
 
