@@ -47,10 +47,7 @@ async function GetPayload(req, res) {
     let client_last_updated = Number(req.query.last_updated);
     if (!cachedPayload) {
       let payload = await BuildCacheOnTheFly(req, res, apiKey);
-      if (payload?.features) {
-        return res.json(payload);
-      }
-      throw new Error('Cached item failed to propagate');
+      return res.json(payload)
     } else if (cachedPayload.last_updated === client_last_updated) {
       console.log('Project:', cachedPayload.name);
       return CachedResourceValid(res);
