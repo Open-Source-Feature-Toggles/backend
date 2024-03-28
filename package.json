@@ -7,6 +7,7 @@
     "test": "cross-env NODE_ENV=testing jest --runInBand --coverage",
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.js",
     "debug": "cross-env NODE_ENV=development nodemon --inspect ./src/server.js",
+    "dev-docker": "cross-env NODE_ENV=production node ./src/server.js --host 0.0.0.0",
     "make-pretty": "prettier --config .prettierrc ./src/**/** ./src/**/.** --write", 
     "start": "cross-env NODE_ENV=production nodemon ./src/server.js"
   },
