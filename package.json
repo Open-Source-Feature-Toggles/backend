@@ -7,7 +7,7 @@
     "test": "cross-env NODE_ENV=testing jest --runInBand --coverage",
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.js",
     "debug": "cross-env NODE_ENV=development nodemon --inspect ./src/server.js",
-    "make-pretty": "prettier --config .prettierrc ./src/**/** ./src/**/.** --write", 
+    "make-pretty": "prettier --config .prettierrc ./src/**/** ./src/**/.** --write",
     "start": "cross-env NODE_ENV=production nodemon ./src/server.js"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "chalk": "^4.1.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
