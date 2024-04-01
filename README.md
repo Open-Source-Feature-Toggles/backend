@@ -65,15 +65,6 @@ OSFT stands for 'Open Source Feature Toggles'. It is a small feature flagging se
     </tr>
 </table>
 
-#### Other Repositories that are part of OSFT
-
-[JS-Client](https://github.com/DONTSTOPLOVINGMEBABY/Feature-Flagging-Client-API)
-<br/>
-[React SDK](https://github.com/DONTSTOPLOVINGMEBABY/Feature-Toggles-React-SDK)
-<br/>
-[Admin Website](https://github.com/DONTSTOPLOVINGMEBABY/Feature-Flagging-Admin-UI)
-<br/>
-
 ## Running Locally
 
 ### 1. Installation
