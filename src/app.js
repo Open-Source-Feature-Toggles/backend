@@ -29,6 +29,12 @@ function CreateApp() {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookie_parser());
 
+  app.use((req, res, next) => {
+    console.log(req.ip)
+    next()
+  })
+
+
   // Routes
   app.use('/projects', projectRoutes);
   app.use('/features', featuresRoutes);
